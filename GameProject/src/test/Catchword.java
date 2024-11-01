@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.ArrayList;
 //테스트
 public class Catchword extends JFrame implements ActionListener {
-    private String targetWord = "사과"; //목표 단어
+    private String targetWord = "할로윈데이"; //목표 단어
     private JLabel targetLabel; 
     private JLabel timerLabel;
     private JButton[][] buttons = new JButton[3][3]; 
