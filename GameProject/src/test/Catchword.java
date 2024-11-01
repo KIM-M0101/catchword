@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.ArrayList;
-git branch game
+//테스트
 public class Catchword extends JFrame implements ActionListener {
     private String targetWord = "사과"; //목표 단어
     private JLabel targetLabel; 
