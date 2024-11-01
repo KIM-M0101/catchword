@@ -8,28 +8,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.ArrayList;
-git branch game
 public class Catchword extends JFrame implements ActionListener {
-    private String targetWord = "»ç°ú"; //¸ñÇ¥ ´Ü¾î
+    private String targetWord = "ì‚¬ê³¼"; //ëª©í‘œ ë‹¨ì–´
     private JLabel targetLabel; 
     private JLabel timerLabel;
     private JButton[][] buttons = new JButton[3][3]; 
-    private int currentIndex = 0; // ÇöÀç »ç¿ëÀÚ°¡ ¸ÂÃç¾ß ÇÒ ±ÛÀÚÀÇ ÀÎµ¦½º
+    private int currentIndex = 0; // í˜„ì¬ ì‚¬ìš©ìê°€ ë§ì¶°ì•¼ í•  ê¸€ìì˜ ì¸ë±ìŠ¤
     private int timeLimit = 30; 
     private Timer timer; 
     
     public Catchword() {
-        setTitle("ÇÑ±Û ´Ü¾î ¸ÂÃß±â °ÔÀÓ");
+        setTitle("í•œê¸€ ë‹¨ì–´ ë§ì¶”ê¸° ê²Œì„");
         setSize(400, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         
-        targetLabel = new JLabel("¸ñÇ¥ ´Ü¾î: " + targetWord);
-        targetLabel.setFont(new Font("µ¸¿ò", Font.BOLD, 18)); 
+        targetLabel = new JLabel("ëª©í‘œ ë‹¨ì–´: " + targetWord);
+        targetLabel.setFont(new Font("ë‹ì›€", Font.BOLD, 18)); 
         targetLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(targetLabel, BorderLayout.NORTH);
-        timerLabel = new JLabel("³²Àº ½Ã°£: " + timeLimit + "ÃÊ");
-        timerLabel.setFont(new Font("µ¸¿ò", Font.BOLD, 18));
+        timerLabel = new JLabel("ë‚¨ì€ ì‹œê°„: " + timeLimit + "ì´ˆ");
+        timerLabel.setFont(new Font("ë‹ì›€", Font.BOLD, 18));
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(timerLabel, BorderLayout.SOUTH);
        
@@ -42,32 +41,32 @@ public class Catchword extends JFrame implements ActionListener {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 buttons[i][j] = new JButton();
-                buttons[i][j].setFont(new Font("µ¸¿ò", Font.BOLD, 24)); // ÇÑ±ÛÀÌ Àß º¸ÀÌ´Â ±Û²Ã·Î ¼³Á¤
+                buttons[i][j].setFont(new Font("ë‹ì›€", Font.BOLD, 24)); // í•œê¸€ì´ ì˜ ë³´ì´ëŠ” ê¸€ê¼´ë¡œ ì„¤ì •
                 buttons[i][j].addActionListener(this);
                 buttons[i][j].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
                 gridPanel.add(buttons[i][j]);
             }
         }
         JMenuBar menuBar = new JMenuBar();
-        JMenu gameMenu = new JMenu("°ÔÀÓ");
-        JMenuItem exitItem = new JMenuItem("Á¾·á");
+        JMenu gameMenu = new JMenu("ê²Œì„");
+        JMenuItem exitItem = new JMenuItem("ì¢…ë£Œ");
         exitItem.addActionListener(e -> System.exit(0));
         gameMenu.add(exitItem);
         menuBar.add(gameMenu);
         setJMenuBar(menuBar);
         
-        //´Ü¾î¹èÄ¡
+        //ë‹¨ì–´ë°°ì¹˜
         shuffleButtons();
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 timeLimit--; 
-                timerLabel.setText("³²Àº ½Ã°£: " + timeLimit + "ÃÊ");
+                timerLabel.setText("ë‚¨ì€ ì‹œê°„: " + timeLimit + "ì´ˆ");
 
                 
                 if (timeLimit <= 0) {
                     timer.stop();
-                    JOptionPane.showMessageDialog(Catchword.this, "½Ã°£ ÃÊ°ú! ´Ù½Ã ½ÃµµÇÏ¼¼¿ä.");
+                    JOptionPane.showMessageDialog(Catchword.this, "ì‹œê°„ ì´ˆê³¼! ë‹¤ì‹œ ì‹œë„í•˜ì„¸ìš”.");
                     resetGame(); 
                 }
             }
@@ -77,12 +76,12 @@ public class Catchword extends JFrame implements ActionListener {
     private void resetGame() {
         currentIndex = 0; 
         timeLimit = 30; 
-        timerLabel.setText("³²Àº ½Ã°£: " + timeLimit + "ÃÊ");
+        timerLabel.setText("ë‚¨ì€ ì‹œê°„: " + timeLimit + "ì´ˆ");
         shuffleButtons(); 
         timer.start(); 
     }
 
-    //·£´ıÀ¸·Î ±ÛÀÚ¸¦ ¹èÄ¡
+    //ëœë¤ìœ¼ë¡œ ê¸€ìë¥¼ ë°°ì¹˜
     private void shuffleButtons() {
         ArrayList<Character> chars = new ArrayList<>();
         
@@ -93,7 +92,7 @@ public class Catchword extends JFrame implements ActionListener {
         
         
         while (chars.size() < 9) {
-            chars.add((char) ('°¡' + Math.random() * (('ÆR' - '°¡') + 1)));
+            chars.add((char) ('ê°€' + Math.random() * (('R' - 'ê°€') + 1)));
         }
         
         
@@ -113,17 +112,17 @@ public class Catchword extends JFrame implements ActionListener {
         JButton clickedButton = (JButton) e.getSource();
         String clickedText = clickedButton.getText();
        
-        //¸ñÇ¥ ±ÛÀÚ¿Í ÀÏÄ¡ÇÏ´ÂÁö È®ÀÎ
+        //ëª©í‘œ ê¸€ìì™€ ì¼ì¹˜í•˜ëŠ”ì§€ í™•ì¸
         if (clickedText.charAt(0) == targetWord.charAt(currentIndex)) {
             currentIndex++;
             
            
             if (currentIndex == targetWord.length()) {
-                JOptionPane.showMessageDialog(this, "¼º°ø! ´Ü¾î¸¦ ¿Ï¼ºÇß½À´Ï´Ù.");
+                JOptionPane.showMessageDialog(this, "ì„±ê³µ! ë‹¨ì–´ë¥¼ ì™„ì„±í–ˆìŠµë‹ˆë‹¤.");
                 currentIndex = 0; 
             }
         } else {
-            JOptionPane.showMessageDialog(this, "¿À´ä! ´Ù½Ã ½ÃµµÇÏ¼¼¿ä.");
+            JOptionPane.showMessageDialog(this, "ì˜¤ë‹µ! ë‹¤ì‹œ ì‹œë„í•˜ì„¸ìš”.");
             currentIndex = 0; 
         }
         
