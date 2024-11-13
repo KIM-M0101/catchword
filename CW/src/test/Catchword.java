@@ -16,12 +16,12 @@ public class Catchword extends JFrame implements ActionListener {
     private ArrayList<String> words = loadWordsFromFile("words.txt");
     private int currentWordIndex;
     private String targetWord;
-
-    private JLabel targetLabel;
     private JLabel timerLabel;
     private JLabel stageLabel;     // 현재 단계를 표시하는 레이블
     private JLabel problemLabel;   // 현재 문제 번호를 표시하는 레이블
-
+    private JPanel targetPanel; // 목표 단어를 표시하는 패널
+    private ArrayList<JLabel> targetLabels; // 각 글자별 JLabel을 저장하는 리스트
+    
     private JButton[][] buttons = new JButton[3][3];
     private int currentIndex = 0;
     private int time = 30;
@@ -92,11 +92,18 @@ public class Catchword extends JFrame implements ActionListener {
         // 상단에 infoPanel 추가
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(infoPanel, BorderLayout.NORTH);
-        
-        targetLabel = new JLabel("목표 단어: " + targetWord, SwingConstants.CENTER);
-        targetLabel.setFont(new Font("돋움", Font.BOLD, 40));
-        topPanel.add(targetLabel, BorderLayout.CENTER);
-        
+
+        // 목표 단어를 표시하는 패널 설정 한글자씩 패널로해서 색을 바꿀수 있게함
+        targetPanel = new JPanel();
+        targetLabels = new ArrayList<>();
+        for (char c : targetWord.toCharArray()) {
+            JLabel letterLabel = new JLabel(String.valueOf(c));
+            letterLabel.setFont(new Font("돋움", Font.BOLD, 40));
+            targetPanel.add(letterLabel);
+            targetLabels.add(letterLabel);
+        }
+        topPanel.add(targetPanel, BorderLayout.CENTER);
+
         add(topPanel, BorderLayout.NORTH);
 
         JPanel timerPanel = new JPanel(new BorderLayout());
@@ -153,35 +160,37 @@ public class Catchword extends JFrame implements ActionListener {
         time += plusTime;
         timerLabel.setText("남은 시간: " + time + "초 + " + plusTime + "초");
 
-        Timer extraTimeTimer = new Timer(3000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timerLabel.setText("남은 시간: " + time + "초");
-            }
-        });
-        extraTimeTimer.setRepeats(false);
-        extraTimeTimer.start();
+        
     }
 
     private void penaltyTime(int minusTime) {
         time -= minusTime;
         timerLabel.setText("남은 시간: " + time + "초 - " + minusTime + "초");
-
-        Timer extraTimeTimer = new Timer(3000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timerLabel.setText("남은 시간: " + time + "초");
-            }
-        });
     }
 
     private void resetGame() {
         currentIndex = 0;
         currentWordIndex = random.nextInt(words.size());
         targetWord = words.get(currentWordIndex);
-        targetLabel.setText("목표 단어: " + targetWord);
+
+        targetPanel.removeAll();  // 기존의 JLabel 제거
+        targetLabels.clear();     // 새로운 단어를 넣기위해 리스트 초기화
+
+      
+        for (char c : targetWord.toCharArray()) {
+            JLabel letterLabel = new JLabel(String.valueOf(c));
+            letterLabel.setFont(new Font("돋움", Font.BOLD, 40));
+            letterLabel.setForeground(Color.BLACK); 
+            targetPanel.add(letterLabel);
+            targetLabels.add(letterLabel);
+        }
+
+        // targetPanel을 다시 그려 화면에 반영(없어도 되지만 없으면 오류날수있음)
+        targetPanel.revalidate();
+        targetPanel.repaint();
+
         updateProblemLabel(); // 각 라운드에서 문제 번호 업데이트
-        shuffleButtons();
+        shuffleButtons(); 
     }
 
     private void shuffleButtons() {
@@ -235,6 +244,16 @@ public class Catchword extends JFrame implements ActionListener {
         }
         return filein;
     }
+    
+    private void updateTargetLabel() {
+        for (int i = 0; i < targetLabels.size(); i++) {
+            if (i < currentIndex) {
+                targetLabels.get(i).setForeground(Color.BLUE); // 맞춘 글자를 파란색으로 변경
+            } else {
+                targetLabels.get(i).setForeground(Color.BLACK); // 맞추지 않은 글자는 기본 색상으로 유지
+            }
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -244,8 +263,9 @@ public class Catchword extends JFrame implements ActionListener {
         // 목표 단어의 현재 인덱스 글자와 일치하는지 확인
         if (clickedText.charAt(0) == targetWord.charAt(currentIndex)) {
             // 맞은 경우: 검정색 테두리로 설정
-            clickedButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
+            
             currentIndex++;
+            updateTargetLabel();
 
             if (currentIndex == targetWord.length()) {
                 addTime(plusTime);
@@ -264,7 +284,7 @@ public class Catchword extends JFrame implements ActionListener {
             }
         } else {
             // 틀린 경우: 빨간색 테두리로 설정
-            clickedButton.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+            
             penaltyTime(minusTime);
 
             // 배경색을 빨간색으로 바꾸고 다시 원래 색으로 돌아오는 타이머 설정
