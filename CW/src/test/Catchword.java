@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Random;
+import javax.swing.border.LineBorder;
 
 public class Catchword extends JFrame implements ActionListener {
    Random random = new Random();
@@ -18,6 +19,7 @@ public class Catchword extends JFrame implements ActionListener {
    private int currentWordIndex;// 현재 맞춰야 할 단어의 인덱스
    private String targetWord;// 목표 단어
    
+   private JLabel levelLabel;  // 난이도와 문제 번호를 표시할 레이블
    private JLabel targetLabel;
    private JLabel timerLabel;
    private JButton[][] buttons = new JButton[3][3];
@@ -25,13 +27,14 @@ public class Catchword extends JFrame implements ActionListener {
    private int time = 30; // 제한 시간을 30초로 설정
    private int plusTime = 0;
    private Timer timer;
-   private int score = 0; //한 문제 맞출 떄마다 쌓이는 점수. 난이도마다 다름
+   private int score = 0; //한 문제 맞출 ��마다 쌓이는 점수. 난이도마다 다름
    private int totalScore = 0; //score의 합
    private static int MAX_ROUNDS = 5;
    private int roundsCompleted = 0;
    private int finalScore = 0; //게임 끝나고 나오는 최종 점수
    private int minusTime = 1;
-   private static final String[] EXTRA_CHARS = { "가", "나", "다", "라", "마", "바", "사", "아", 
+   private int currentLevel = 1; // 현재 단계
+   private static final String[] EXTRA_CHARS = { "가", "나", "다", "라", "마", "바", "사", "아",
          "자", "차", "카", "타", "파", "하", "강", "난", "당", "락", "만", "방", "산", "알", "장", "착", "칼",
          "탕", "팔", "한"};
 
@@ -79,13 +82,20 @@ public class Catchword extends JFrame implements ActionListener {
       chooseDifficulty();
       currentWordIndex = random.nextInt(words.size()); // 현재 맞춰야 할 단어의 인덱스
       targetWord = words.get(currentWordIndex);
-      // 상단 패널 및 목표 단어 레이블 설정
-      JPanel targetPanel = new JPanel();
-      targetLabel = new JLabel("목표 단어: " + targetWord);
-      targetLabel.setHorizontalAlignment(SwingConstants.CENTER);
-      targetLabel.setFont(new Font("돋움", Font.BOLD, 40));
-      targetPanel.add(targetLabel);
-      add(targetPanel, BorderLayout.NORTH);
+      
+		// 상단 패널 및 목표 단어, 단계 표시 레이블 설정
+		JPanel topPanel = new JPanel(new BorderLayout());
+
+		levelLabel = new JLabel(getLevelText());
+		levelLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		levelLabel.setFont(new Font("돋움", Font.PLAIN, 16));
+		topPanel.add(levelLabel, BorderLayout.WEST);
+
+		targetLabel = new JLabel("목표 단어: " + targetWord);
+		targetLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		targetLabel.setFont(new Font("돋움", Font.BOLD, 40));
+		topPanel.add(targetLabel, BorderLayout.CENTER);
+		add(topPanel, BorderLayout.NORTH);
 
       // 하단의 타이머 레이블 설정
       JPanel timerPanel = new JPanel(new BorderLayout());
@@ -168,14 +178,25 @@ public class Catchword extends JFrame implements ActionListener {
    }
    // 게임을 초기화하는 메서드 (제한 시간을 재설정하지 않음)
    private void resetGame() {
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				buttons[i][j].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+			}
+		}
       currentIndex = 0;
       currentWordIndex = random.nextInt(words.size()); // 새로운 단어를 랜덤으로 선택
       targetWord = words.get(currentWordIndex);
       targetLabel.setText("목표 단어: " + targetWord);
+      levelLabel.setText(getLevelText()); // 단계 및 문제 번호 업데이트
       shuffleButtons();
    }
 
-   // 버튼을 무작위로 섞는 메서드
+   private String getLevelText() {
+	// TODO Auto-generated method stub
+	return null;
+}
+
+	// 버튼을 무작위로 섞는 메서드
       private void shuffleButtons() {
           ArrayList<Character> chars = new ArrayList<>();
 
@@ -183,9 +204,9 @@ public class Catchword extends JFrame implements ActionListener {
               chars.add(c);
           }
 
-          while (chars.size() < 9) { 
-             char extraChar = generateRandomExtraChar(); 
-             if (!chars.contains(extraChar)) 
+          while (chars.size() < 9) {
+             char extraChar = generateRandomExtraChar();
+             if (!chars.contains(extraChar))
              { chars.add(extraChar); }
           }
 
@@ -199,9 +220,9 @@ public class Catchword extends JFrame implements ActionListener {
           }
       }
 
-      // 추가 한글 문자를 무작위로 선택하는 메서드 
-      private char generateRandomExtraChar() { 
-         Random random = new Random(); 
+      // 추가 한글 문자를 무작위로 선택하는 메서드
+      private char generateRandomExtraChar() {
+         Random random = new Random();
          return EXTRA_CHARS[random.nextInt(EXTRA_CHARS.length)].charAt(0);
       }
 
@@ -241,7 +262,7 @@ public class Catchword extends JFrame implements ActionListener {
 
          if (currentIndex == targetWord.length()) {
             addTime(plusTime);
-            totalScore += score; 
+            totalScore += score;
             roundsCompleted++;
 
             if (roundsCompleted == MAX_ROUNDS) {
