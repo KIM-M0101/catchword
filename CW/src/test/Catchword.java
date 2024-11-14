@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Random;
+import main.*;
 
 public class Catchword extends JFrame implements ActionListener {
 	Random random = new Random();
