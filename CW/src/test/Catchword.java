@@ -23,10 +23,11 @@ public class Catchword extends JFrame implements ActionListener {
 	private JPanel targetPanel; // 목표 단어를 표시하는 패널
 	private ArrayList<JLabel> targetLabels; // 각 글자별 JLabel을 저장하는 리스트
 
-	private JButton[][] buttons = new JButton[3][3];
+	private JButton[][] buttons;
 	private int currentIndex = 0; // 현재 글자 인덱스
 	private int time = 30; // 제한 시간을 30초로 설정
 	private int plusTime = 0;
+	private int Psize;
 	private Timer timer;
 	private int score = 0; // 한 문제 맞출 떄마다 쌓이는 점수. 난이도마다 다름
 	private int totalScore = 0; // score의 합
@@ -39,11 +40,11 @@ public class Catchword extends JFrame implements ActionListener {
 
 	private static Difficulty[] difficulties = {
 			// 제한 시간, 글자수, 라운드수, 점수, 추가시간
-			new Difficulty(60, 3, 5, 1, 0), // 쉬움 - 제한 시간 60초, 3글자 단어, 5라운드, 1점, 추가시간0
-			new Difficulty(50, 4, 5, 2, 0), // 중간 - 제한 시간 50초, 4글자 단어, 5라운드
-			new Difficulty(40, 5, 5, 3, 3), // 어려움 - 제한 시간 40초, 5글자 단어, 5라운드
-			new Difficulty(30, 6, 5, 4, 4), // 매우 어려움 - 제한 시간 30초, 6글자 단어, 5라운드
-			new Difficulty(30, 7, 5, 5, 5) // 극악 - 제한 시간 30초, 7글자 단어, 5라운드
+			new Difficulty(60, 3, 5, 1, 0, 3), // 쉬움 - 제한 시간 60초, 3글자 단어, 5라운드, 1점, 추가시간0
+			new Difficulty(50, 4, 5, 2, 0, 3), // 중간 - 제한 시간 50초, 4글자 단어, 5라운드
+			new Difficulty(40, 5, 5, 3, 3, 3), // 어려움 - 제한 시간 40초, 5글자 단어, 5라운드
+			new Difficulty(30, 6, 5, 4, 4, 4), // 매우 어려움 - 제한 시간 30초, 6글자 단어, 5라운드
+			new Difficulty(30, 7, 5, 5, 5, 4) // 극악 - 제한 시간 30초, 7글자 단어, 5라운드
 
 	};
 
@@ -58,6 +59,7 @@ public class Catchword extends JFrame implements ActionListener {
 		MAX_ROUNDS = selectedDifficulty.numRounds;
 		score = selectedDifficulty.score;
 		plusTime = selectedDifficulty.plustime;
+		Psize = selectedDifficulty.Psize;
 
 		// 원하는 길이의 단어만 필터링 (e.g. wordLength에 따라)
 		words = loadWordsWithLength(selectedDifficulty.wordLength);
@@ -118,12 +120,13 @@ public class Catchword extends JFrame implements ActionListener {
 		add(timerLabel, BorderLayout.SOUTH);
 
 		// 3x3 버튼 패널 설정
+		buttons = new JButton[Psize][Psize];
 		JPanel gridPanel = new JPanel();
-		gridPanel.setLayout(new GridLayout(3, 3));
+		gridPanel.setLayout(new GridLayout(Psize, Psize));
 		add(gridPanel, BorderLayout.CENTER);
 
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < Psize; i++) {
+			for (int j = 0; j < Psize; j++) {
 				buttons[i][j] = new JButton();
 				buttons[i][j].setFont(new Font("돋움", Font.BOLD, 40));
 				buttons[i][j].addActionListener(this);
@@ -206,7 +209,7 @@ public class Catchword extends JFrame implements ActionListener {
 			chars.add(c);
 		}
 
-		while (chars.size() < 9) {
+		while (chars.size() < Psize*Psize) {
 			char extraChar = generateRandomExtraChar();
 			if (!chars.contains(extraChar)) {
 				chars.add(extraChar);
@@ -215,8 +218,8 @@ public class Catchword extends JFrame implements ActionListener {
 
 		Collections.shuffle(chars);
 		int index = 0;
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
+		for (int i = 0; i < Psize; i++) {
+			for (int j = 0; j < Psize; j++) {
 				buttons[i][j].setText(chars.get(index).toString());
 				index++;
 			}
