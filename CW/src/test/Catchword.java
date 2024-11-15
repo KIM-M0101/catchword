@@ -49,9 +49,9 @@ public class Catchword extends JFrame implements ActionListener {
 
 	};
 
-	private void chooseDifficulty() {
+	private void chooseDifficulty(MainFrame app) {
 		String[] options = { "1단계", "2단계", "3단계", "4단계", "5단계" };
-		int choice = JOptionPane.showOptionDialog(this, "난이도를 선택하세요:", "난이도 선택", JOptionPane.DEFAULT_OPTION,
+		int choice = JOptionPane.showOptionDialog(app, "난이도를 선택하세요:", "난이도 선택", JOptionPane.DEFAULT_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
 		// 선택된 난이도에 따라 설정 적용
@@ -76,12 +76,12 @@ public class Catchword extends JFrame implements ActionListener {
 		return filteredWords;
 	}
 
-	public Catchword() {
+	public Catchword(MainFrame app) {
 		setTitle("한글 단어 맞추기 게임");
 		setSize(500, 500);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		chooseDifficulty();
+		chooseDifficulty(app);
 		currentWordIndex = random.nextInt(words.size());
 		targetWord = words.get(currentWordIndex);
 
@@ -337,8 +337,8 @@ public class Catchword extends JFrame implements ActionListener {
 		problemLabel.setText("문제: " + (roundsCompleted + 1) + " / " + MAX_ROUNDS);
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Catchword game = new Catchword();
 		game.setVisible(true);
-	}
+	}*/
 }

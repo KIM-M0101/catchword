@@ -12,7 +12,6 @@ import login.StartFrame;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import test.*;
 
 public class GameManager {
 	public MainFrame home;
@@ -210,10 +209,10 @@ public class GameManager {
 		JOptionPane.showMessageDialog(null, info, "알림", JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	void startGame() {
+	/*void startGame() {
 		Catchword game = new Catchword();
 		game.setVisible(true);
-	}
+	}*/
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

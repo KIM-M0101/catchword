@@ -1,7 +1,8 @@
 package main;
 
 import javax.swing.*;
-import test.*;
+
+import test.Catchword;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -46,7 +47,7 @@ public class MainMenu {
 			public void actionPerformed(ActionEvent e) {
 
 				// 게임 모드 버튼 누르면 캐치워드 게임 시작
-				Catchword catchwordGame = new Catchword();
+				Catchword catchwordGame = new Catchword(mainApp);
 				catchwordGame.setVisible(true);
 			}
 		});
