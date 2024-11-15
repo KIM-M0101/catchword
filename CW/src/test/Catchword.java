@@ -81,6 +81,9 @@ public class Catchword extends JFrame implements ActionListener {
 		setSize(500, 500);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		setAlwaysOnTop(true);
+		setLocationRelativeTo(null);
+		
 		chooseDifficulty(app);
 		currentWordIndex = random.nextInt(words.size());
 		targetWord = words.get(currentWordIndex);
@@ -148,6 +151,7 @@ public class Catchword extends JFrame implements ActionListener {
 
 		shuffleButtons(); // 버튼에 글자 배치
 		startTimer(); // 타이머 시작
+		
 	}
 
 	// 타이머 설정 메서드
@@ -331,12 +335,30 @@ public class Catchword extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(this,
 					score + "단계 clear!\n" + "최종 점수: " + finalScore + "점\n남은 시간: " + time + "초");
 		}
+		
+		dispose();
 	}
 
 	private void updateProblemLabel() {
 		problemLabel.setText("문제: " + (roundsCompleted + 1) + " / " + MAX_ROUNDS);
 	}
 
+
+	/* public boolean isGameOver() {
+		// 1. 시간 초과
+		if (time == 0) {
+			return true;
+		}
+
+		// 2. 모든 라운드를 완료했는지 확인
+		if (roundsCompleted == MAX_ROUNDS) {
+			return true;
+		}
+
+		// 게임이 종료되지 않은 경우
+		return false;
+	}*/
+	
 	/*public static void main(String[] args) {
 		Catchword game = new Catchword();
 		game.setVisible(true);
