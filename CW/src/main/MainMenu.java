@@ -12,9 +12,12 @@ import java.util.ArrayList;
 public class MainMenu {
 	// 전체적인 메뉴를 구성하는 역할을 함
 	MainFrame mainApp;
-
+	Player p;
+	PlayerRecord r;
+	
 	public MainMenu(MainFrame app) {
 		this.mainApp = app;
+		this.p = mainApp.currentPlayer;
 	}
 
 	// 메인창
@@ -45,7 +48,6 @@ public class MainMenu {
 		gameModeButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				// 게임 모드 버튼 누르면 캐치워드 게임 시작
 				Catchword catchwordGame = new Catchword(mainApp);
 				catchwordGame.setVisible(true);
@@ -69,9 +71,9 @@ public class MainMenu {
 
 	// 사용자 정보 창
 	public JPanel UserInfoPanel() {
-		Player p = mainApp.getCurrentPlayer();
-		PlayerRecord r = p.getRecord();
-
+		
+		r= p.playerRecord;
+		
 		String id = "ID : " + p.getId();
 		String score;
 		if (r != null)
@@ -171,6 +173,14 @@ public class MainMenu {
 			}
 		});
 		return backButton;
+	}
+	
+	public void setBestScore(Catchword c) {
+		if(r.bestScore<c.finalScore)
+			r.bestScore=c.finalScore;
+		if(r.bestScore==c.finalScore)
+			if(r.bestScoreLevel<c.scoreLevel)
+				r.bestScoreLevel=c.scoreLevel;
 	}
 
 }
