@@ -2,16 +2,21 @@ package main;
 
 import javax.swing.*;
 
+import static main.GameManager.p;
+
 import java.awt.*;
 
 public class MainFrame extends JFrame {
+	
+	Player currentPlayer=p;
+	
 	// 전체 메뉴를 띄우는 창
 	private CardLayout cardLayout = new CardLayout();
 	private JPanel mainPanel = new JPanel(cardLayout);
-	private MainMenu menu = new MainMenu(this);
-	Player currentPlayer;
+	private MainMenu menu;
 
 	public void setFrame() {
+		menu= new MainMenu(this);
 		// 바꿔낄 패널들을 추가
 		mainPanel.add(menu.MainMenuPanel(), "MainMenuPanel");
 		mainPanel.add(menu.UserInfoPanel(), "UserInfoPanel");
@@ -27,13 +32,6 @@ public class MainFrame extends JFrame {
 
 	}
 
-	public void setCurrentPlayer(Player p) {
-		this.currentPlayer = p;
-	}
-
-	public Player getCurrentPlayer() {
-		return currentPlayer;
-	}
 
 	public void showPanel(String panelName) {
 		cardLayout.show(mainPanel, panelName);
