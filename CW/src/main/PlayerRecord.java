@@ -5,8 +5,8 @@ import java.util.Scanner;
 public class PlayerRecord {
 
 	String playerId = "";
-	int bestScore=0;
-	int bestScoreLevel=0;
+	public int bestScore=0;
+	public int bestScoreLevel=0;
 
 	void read(Scanner scan) {
 		playerId = scan.next();
