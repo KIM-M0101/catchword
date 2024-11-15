@@ -14,16 +14,15 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GameManager {
-	public MainFrame home;
 	// 게임 매니저가 전체 클래스를 관리함
 
 	Scanner s = new Scanner(System.in);
 	static ArrayList<Player> playerList = new ArrayList<>();
-	ArrayList<PlayerRecord> recordList = new ArrayList<>();
+	static ArrayList<PlayerRecord> recordList = new ArrayList<>();
 	String userId = null;
 	String userPw = null;
 	File playerTxt = new File("player.txt");
-	File recordTxt = new File("record.txt");
+	static File recordTxt = new File("record.txt");
 
 	JoinFrame J;
 	LoginFrame L;
@@ -33,16 +32,18 @@ public class GameManager {
 
 	public void start() {
 		// 게임을 키면 제일 먼저 작동해야하는 함수
-		readPlayer();
 		readRecord();
+		readPlayer();
+		for(Player p: playerList)
+			findRecord(p);
+		
 		L = new LoginFrame();
 		S = new StartFrame();
 		J = new JoinFrame();
 
 		while (true) {
 			p = loginPlayer();
-
-			setupMain(p);
+			setupMain();
 		}
 	}
 
@@ -68,17 +69,14 @@ public class GameManager {
 		fileIn.close();
 	}
 
-	void setupMain(Player p) {
-
+	void setupMain() {
 		// 메인 화면을 구성하고 로그인이 되어있는 동안 화면을 유지하는 기능
-		home = new MainFrame();
-
-		home.setCurrentPlayer(p);
+		MainFrame home = new MainFrame();
+		
 		home.setFrame();
 
 		while (home.currentPlayer != null) {
 			home.setVisible(true);
-
 		}
 
 		home.dispose();
@@ -106,6 +104,33 @@ public class GameManager {
 			writer.write(pw);
 			writer.write("\r\n");
 
+			// Bufferd 종료
+			writer.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void updateRecord() {
+		try {
+			// 만들 파일 이름 및 경로 지정
+			File file = new File("record.txt");
+			Scanner f = openFile(file);
+
+			// 파일 생성
+			file.createNewFile();
+
+			// 생성된 파일에 Buffer 를 사용하여 텍스트 입력
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter writer = new BufferedWriter(fw);
+			
+			for(Player p:playerList) {
+			// 데이터 입력
+			writer.write(p.id + " "+p.playerRecord.bestScore+" "+p.playerRecord.bestScoreLevel);
+			writer.write("\r\n");
+			}
+			
 			// Bufferd 종료
 			writer.close();
 
@@ -163,11 +188,11 @@ public class GameManager {
 		return null;
 	}
 
-	public PlayerRecord findRecord(String playerId) {
+	public void findRecord(Player p) {
+		readRecord();
 		for (PlayerRecord r : recordList)
-			if (r.getPlayerId().equals(playerId))
-				return r;
-		return null;
+			if (r.getPlayerId().equals(p.getId()))
+				p.playerRecord=r;
 	}
 
 	public Player loginCheck(String enteredId, String enteredPw) {
@@ -175,8 +200,6 @@ public class GameManager {
 		p = findPlayer(enteredId);
 		if (p != null)
 			if (p.matchPw(enteredPw)) {
-				PlayerRecord playerRecord = findRecord(p.getId());
-				p.setRecord(playerRecord);
 				alarm("로그인 성공");
 				S.dispose();
 				return p;
@@ -193,7 +216,7 @@ public class GameManager {
 		return true;
 	}
 
-	Scanner openFile(File f) {
+	static Scanner openFile(File f) {
 		Scanner filein = null;
 		try {
 			filein = new Scanner(f);
