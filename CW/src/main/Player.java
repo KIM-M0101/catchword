@@ -28,10 +28,6 @@ public class Player {
 		return id;
 	}
 	
-	public void setRecord(PlayerRecord playerRecord) {
-		this.playerRecord = playerRecord;
-	}
-	
 	public PlayerRecord getRecord() {
 		return playerRecord;
 	}
