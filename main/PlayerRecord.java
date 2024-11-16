@@ -23,7 +23,9 @@ public class PlayerRecord {
 	}
 	
 	public static void updateBestScore(int finalScore) {
-		bestScore+=finalScore;
+		if (finalScore > bestScore) {
+			bestScore = finalScore;
+        }
     }
 
 	public int getBestScoreLevel() {
