@@ -19,7 +19,7 @@ public class Button extends BasicButtonUI {
         //g2.setPaint(gradient);
         g2.fillRoundRect(0, 0, b.getWidth(), b.getHeight(), 40, 40);
         // 텍스트 색상과 스타일 설정
-        g2.setFont(new Font("돋움", Font.BOLD, 20));
+        g2.setFont(new Font("돋움", Font.BOLD, 27));
         g2.setColor(Color.black);
         FontMetrics fm = g2.getFontMetrics();
         int x = (b.getWidth() - fm.stringWidth(b.getText())) / 2;
