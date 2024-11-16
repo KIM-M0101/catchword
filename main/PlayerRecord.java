@@ -5,8 +5,8 @@ import java.util.Scanner;
 public class PlayerRecord {
 
 	String playerId = "";
-	public static int bestScore=0;
-	public static int bestScoreLevel=0;
+	public int bestScore=0;
+	public int bestScoreLevel=0;
 
 	void read(Scanner scan) {
 		playerId = scan.next();
@@ -22,7 +22,7 @@ public class PlayerRecord {
 		return bestScore;
 	}
 	
-	public static void updateBestScore(int finalScore) {
+	public void updateBestScore(int finalScore) {
 		if (finalScore > bestScore) {
 			bestScore = finalScore;
         }
@@ -31,7 +31,7 @@ public class PlayerRecord {
 	public int getBestScoreLevel() {
 		return bestScoreLevel;
 	}
-	public static void getBestScoreLevel(int score) {
+	public void getBestScoreLevel(int score) {
         if (score > bestScoreLevel) {
         	bestScoreLevel = score;
         }

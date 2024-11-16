@@ -39,6 +39,7 @@ public class Catchword extends JPanel implements ActionListener {
     private int roundsCompleted = 0;
     private int finalScore = 0;
     private int minusTime = 1;
+    PlayerRecord r = null;
 
     private static final String[] EXTRA_CHARS = { "가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하",
             "강", "난", "당", "락", "만", "방", "산", "알", "장", "착", "칼", "탕", "팔", "한" };
@@ -59,7 +60,8 @@ public class Catchword extends JPanel implements ActionListener {
 		}
 		return filteredWords;
 	}
-    public Catchword(int difficultyLevel) {
+    public Catchword(int difficultyLevel, PlayerRecord r) {
+    	this.r = r;
         setLayout(new BorderLayout());
 
         Difficulty selectedDifficulty = difficulties[difficultyLevel];
@@ -297,7 +299,7 @@ public class Catchword extends JPanel implements ActionListener {
 	    } else {
 	        time += plusTime;
 	        finalScore = totalScore+ score * time;
-	        PlayerRecord.getBestScoreLevel(score);
+	        r.getBestScoreLevel(score);
 	    }
 
 	    // 타이머 중지 (게임이 끝났으므로)
@@ -305,7 +307,7 @@ public class Catchword extends JPanel implements ActionListener {
 	        timer.stop();
 	    }
 
-	    PlayerRecord.updateBestScore(finalScore);
+	    r.updateBestScore(finalScore);
 	    ScorePanel scorePanel = new ScorePanel(time,finalScore, roundsCompleted);
 	    JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
 	    if (mainFrame instanceof MainFrame) {

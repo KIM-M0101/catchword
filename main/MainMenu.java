@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class MainMenu {
+	Player p = null;
+	PlayerRecord r = null;
     // 전체적인 메뉴를 구성하는 역할을 함
     MainFrame mainApp;
 
@@ -53,7 +55,7 @@ public class MainMenu {
                         JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
                 // 게임 모드 버튼 누르면 캐치워드 게임 시작
                 if (level >= 0) {
-                    Catchword catchwordGame = new Catchword(level);
+                    Catchword catchwordGame = new Catchword(level, r);
                     mainApp.setContentPane(catchwordGame); // 메인메뉴 화면을 게임 화면으로 변경
                     mainApp.revalidate();
                     mainApp.repaint();
@@ -80,8 +82,8 @@ public class MainMenu {
 
     // 사용자 정보 창
     public JPanel UserInfoPanel() {
-        Player p = mainApp.getCurrentPlayer();
-        PlayerRecord r = p.getRecord(); 
+        p = mainApp.getCurrentPlayer();
+        r = p.getRecord(); 
 
         String id = "ID : " + p.getId();
         String score;
