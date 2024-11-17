@@ -19,10 +19,18 @@ public class PlayerRecord {
     public String getPlayerId() {
         return playerId;
     }
+    
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
 
     // 최고 점수 반환
     public int getBestScore() {
         return bestScore;
+    }
+    
+    public void setBestScore(int bestScore) {
+        this.bestScore = bestScore;
     }
 
     // 최고 레벨 반환
@@ -30,6 +38,10 @@ public class PlayerRecord {
         return bestScoreLevel;
     }
 
+    public void setBestScoreLevel(int bestScoreLevel) {
+        this.bestScoreLevel = bestScoreLevel;
+    }
+    
     // 점수 업데이트 (최고 점수만 갱신)
     /*public void updateBestScore(int finalScore) {
         if (finalScore > bestScore) {
@@ -54,4 +66,5 @@ public class PlayerRecord {
             bestScoreLevel = level;
         }*/
     }
+    
 }

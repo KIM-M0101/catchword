@@ -19,7 +19,7 @@ public class GameManager {
 
 	Scanner s = new Scanner(System.in);
 	static ArrayList<Player> playerList = new ArrayList<>();
-	ArrayList<PlayerRecord> recordList = new ArrayList<>();
+	static ArrayList<PlayerRecord> recordList = new ArrayList<>();
 	String userId = null;
 	String userPw = null;
 	File playerTxt = new File("player.txt");
@@ -43,6 +43,7 @@ public class GameManager {
 			p = loginPlayer();
 
 			setupMain(p);
+			updateRecordTxt();
 		}
 	}
 
@@ -84,31 +85,67 @@ public class GameManager {
 		home.dispose();
 	}
 
-	void join() {
+	void updateRecordTxt() {
+		try {
+			// 파일을 새로 작성 (덮어쓰기 모드)
+			BufferedWriter writer = new BufferedWriter(new FileWriter(recordTxt, false));
 
+			// PlayerRecord 데이터를 파일에 작성
+			for (PlayerRecord r : recordList) {
+				String playerId = r.getPlayerId();
+				int bestScore = r.getBestScore();
+				int bestScoreLevel = r.getBestScoreLevel();
+
+				// 데이터 작성
+				writer.write(playerId + " " + bestScore + " " + bestScoreLevel);
+				writer.newLine();
+			}
+
+			// BufferedWriter 닫기
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	void join() {
 		try {
 			// 만들 파일 이름 및 경로 지정
-			File file = new File("player.txt");
-			Scanner f = openFile(file);
+			File playerFile = new File("player.txt");
+			// Scanner playerScan = openFile(playerFile);
 
 			// 파일 생성
-			file.createNewFile();
+			playerFile.createNewFile();
 
 			// 생성된 파일에 Buffer 를 사용하여 텍스트 입력
-			FileWriter fw = new FileWriter(file, true);
-			BufferedWriter writer = new BufferedWriter(fw);
+			FileWriter playerFw = new FileWriter(playerFile, true);
+			BufferedWriter playerWriter = new BufferedWriter(playerFw);
 
 			String id = userId;
 			String pw = userPw;
 
 			// 데이터 입력
-			writer.write(id + "\t");
-			writer.write(pw);
-			writer.write("\r\n");
+			playerWriter.write(id + "\t" + pw);
+			playerWriter.newLine();
 
 			// Bufferd 종료
-			writer.close();
+			playerWriter.close();
 
+			
+			File recordFile = new File("record.txt");
+			// Scanner recordScan = openFile(recordFile);
+			
+			recordFile.createNewFile();
+			
+			FileWriter recordFw = new FileWriter(recordFile);
+			BufferedWriter recordWriter = new BufferedWriter(recordFw);
+			
+			recordWriter.write(id + " 0 0");
+			recordWriter.newLine();
+			
+			recordWriter.close();
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -167,7 +204,16 @@ public class GameManager {
 		for (PlayerRecord r : recordList)
 			if (r.getPlayerId().equals(playerId))
 				return r;
-		return null;
+		
+		PlayerRecord newRecord = new PlayerRecord();
+		newRecord.setPlayerId(playerId);
+		// 초기 값 설정
+		newRecord.setBestScore(0);  
+	    newRecord.setBestScoreLevel(0);
+		recordList.add(newRecord);
+		
+		updateRecordTxt();
+		return newRecord;
 	}
 
 	public Player loginCheck(String enteredId, String enteredPw) {
@@ -210,7 +256,6 @@ public class GameManager {
 	}
 
 	
-
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		GameManager GM = new GameManager();
