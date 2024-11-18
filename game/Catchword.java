@@ -78,7 +78,7 @@ public class Catchword extends JPanel implements ActionListener {
         targetWord = words.get(currentWordIndex);
 
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        stageLabel = new JLabel("단계: " + (1));
+        stageLabel = new JLabel("단계: " + score);
         problemLabel = new JLabel("문제: 1 / " + MAX_ROUNDS);
 
         stageLabel.setFont(new Font("돋움", Font.BOLD, 16));
