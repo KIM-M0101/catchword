@@ -19,6 +19,7 @@ public class MainFrame extends JFrame {
         mainPanel.add(menu.UserInfoPanel(), "UserInfoPanel"); 
         mainPanel.add(menu.RankingPanel(), "RankingPanel");
         mainPanel.add(menu.ExplainGamePanel(), "ExplainGamePanel");
+        mainPanel.add(menu.ExitGamePanel(), "ExitGamePanel");
 
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

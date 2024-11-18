@@ -70,16 +70,24 @@ public class GameManager {
 	}
 
 	void setupMain(Player p) {
-
 		// 메인 화면을 구성하고 로그인이 되어있는 동안 화면을 유지하는 기능
 		home = new MainFrame();
 
 		home.setCurrentPlayer(p);
 		home.setFrame();
 
+		// 창 닫기 이벤트 감지
+		home.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent e) {
+				// 기록 갱신
+				updateRecordTxt();
+				home.dispose();
+			}
+		});
+
 		while (home.currentPlayer != null) {
 			home.setVisible(true);
-
 		}
 
 		home.dispose();
