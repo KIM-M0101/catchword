@@ -11,7 +11,7 @@ public class MainFrame extends JFrame {
     private CardLayout cardLayout = new CardLayout();
     private JPanel mainPanel = new JPanel(cardLayout);
     private MainMenu menu = new MainMenu(this);
-    Player currentPlayer;
+    static Player currentPlayer;
 
     public void setFrame() {
         // 바꿔낄 패널들을 추가
@@ -33,7 +33,7 @@ public class MainFrame extends JFrame {
         this.currentPlayer = p;
     }
 
-    public Player getCurrentPlayer() {
+    public static Player getCurrentPlayer() {
         return currentPlayer;
     }
 

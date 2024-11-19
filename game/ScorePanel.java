@@ -3,10 +3,12 @@ package game;
 import javax.swing.*;
 
 import main.MainFrame;
+import main.PlayerRecord;
 
 import java.awt.*;
 
 public class ScorePanel extends JPanel {
+	private PlayerRecord r = MainFrame.getCurrentPlayer().getRecord();
     private boolean transitionInProgress = false;
     public ScorePanel(int time, int finalScore, int roundsCompleted) {
         setLayout(new BorderLayout());
@@ -19,6 +21,16 @@ public class ScorePanel extends JPanel {
         JLabel scoreLabel = new JLabel(scoreMessage, SwingConstants.CENTER);
         scoreLabel.setFont(new Font("돋움", Font.PLAIN, 18));
         add(scoreLabel, BorderLayout.CENTER);
+        
+        if(finalScore>=r.getBestScore()) {
+        	JPanel newRecordPanel= new JPanel();
+        	ImageIcon icon=new ImageIcon("wow.png");
+        	JLabel label = new JLabel(finalScore+"점 달성! 신기록입니다!!",SwingConstants.CENTER);
+        	label.setIcon(icon);
+        	label.setHorizontalTextPosition(JLabel.CENTER);
+        	label.setVerticalTextPosition(JLabel.BOTTOM);
+        	add(label);
+        }
 
         JButton backButton = new JButton("메인 메뉴로 돌아가기");
         backButton.setFont(new Font("돋움", Font.PLAIN, 16));
