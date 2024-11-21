@@ -60,6 +60,7 @@ public class MainMenu {
 					mainApp.setContentPane(catchwordGame); // 메인메뉴 화면을 게임 화면으로 변경
 					mainApp.revalidate();
 					mainApp.repaint();
+					mainApp.setResizable(false);
 				}
 			}
 		});

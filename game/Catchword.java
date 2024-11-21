@@ -2,6 +2,9 @@ package game;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+
+import game.Button;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +17,7 @@ import java.util.Scanner;
 import main.*;
 
 public class Catchword extends JPanel implements ActionListener {
+	Image gameBackGround= new ImageIcon("gameWindow.jpg").getImage();
     Random random = new Random();
     // 파일에서 단어 로드
     private ArrayList<String> words = loadWordsFromFile("words.txt");
@@ -61,11 +65,20 @@ public class Catchword extends JPanel implements ActionListener {
 		}
 		return filteredWords;
 	}
+    
+
+    public void paintComponent(Graphics g) {
+    	super.paintComponent(g);
+    	g.drawImage(gameBackGround, 0, 0,getWidth(), getHeight(), this);
+    }
+
+    
     public Catchword(int difficultyLevel, PlayerRecord r) {
     	this.selectedLevel = difficultyLevel;
     	this.r = r;
-        setLayout(new BorderLayout());
-
+        setLayout(new BorderLayout(0,0));
+        setSize(1280,720);
+        
         Difficulty selectedDifficulty = difficulties[difficultyLevel];
         time = selectedDifficulty.timeLimit;
         MAX_ROUNDS = selectedDifficulty.numRounds;
@@ -76,10 +89,13 @@ public class Catchword extends JPanel implements ActionListener {
 
         currentWordIndex = random.nextInt(words.size());
         targetWord = words.get(currentWordIndex);
-
+        
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        infoPanel.setBackground(new Color(255,0,0,0));
         stageLabel = new JLabel("단계: " + score);
+        stageLabel.setBackground(new Color(255,0,0,0));
         problemLabel = new JLabel("문제: 1 / " + MAX_ROUNDS);
+        problemLabel.setBackground(new Color(255,0,0,0));
 
         stageLabel.setFont(new Font("돋움", Font.BOLD, 16));
         problemLabel.setFont(new Font("돋움", Font.BOLD, 16));
@@ -87,9 +103,12 @@ public class Catchword extends JPanel implements ActionListener {
         infoPanel.add(problemLabel);
 
         topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(new Color(255,0,0,0));
         topPanel.add(infoPanel, BorderLayout.NORTH);
 
         targetPanel = new JPanel();
+        targetPanel.setBackground(new Color(255,0,0,0));
+        
         targetLabels = new ArrayList<>();
         for (char c : targetWord.toCharArray()) {
             JLabel letterLabel = new JLabel(String.valueOf(c));
@@ -105,9 +124,15 @@ public class Catchword extends JPanel implements ActionListener {
         add(timerLabel, BorderLayout.SOUTH);
 
         buttons = new JButton[Psize][Psize];
+        JPanel canvas= new JPanel(null);
+        canvas.setBackground(new Color(255,0,0,0));
         gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(Psize, Psize));
-        add(gridPanel, BorderLayout.CENTER);
+        gridPanel.setLayout(new GridLayout(Psize, Psize,10,10));
+        gridPanel.setBackground(new Color(255,0,0,0));
+        gridPanel.setSize(getWidth()/2, getHeight()/2);
+        gridPanel.setLocation(getWidth()/2-gridPanel.getWidth()/2, getHeight()/2-gridPanel.getHeight()/2);
+        canvas.add(gridPanel);
+        add(canvas, BorderLayout.CENTER);
 
         for (int i = 0; i < Psize; i++) {
             for (int j = 0; j < Psize; j++) {
@@ -119,9 +144,9 @@ public class Catchword extends JPanel implements ActionListener {
                 buttons[i][j].setUI(new Button());
             }
         }
-
         shuffleButtons();
         startTimer();
+       
     }
 
 
@@ -166,6 +191,7 @@ public class Catchword extends JPanel implements ActionListener {
 			JLabel letterLabel = new JLabel(String.valueOf(c));
 			letterLabel.setFont(new Font("돋움", Font.BOLD, 40));
 			letterLabel.setForeground(Color.BLACK);
+			letterLabel.setBackground(new Color(255,0,0,0));
 			targetPanel.add(letterLabel);
 			targetLabels.add(letterLabel);
 		}
@@ -173,6 +199,7 @@ public class Catchword extends JPanel implements ActionListener {
 		// targetPanel을 다시 그려 화면에 반영(없어도 되지만 없으면 오류날수있음)
 		targetPanel.revalidate();
 		targetPanel.repaint();
+		this.repaint();
 
 		updateProblemLabel(); // 각 라운드에서 문제 번호 업데이트
 		shuffleButtons();
@@ -191,7 +218,7 @@ public class Catchword extends JPanel implements ActionListener {
 				chars.add(extraChar);
 			}
 		}
-
+		
 		Collections.shuffle(chars);
 		int index = 0;
 		for (int i = 0; i < Psize; i++) {
@@ -200,6 +227,7 @@ public class Catchword extends JPanel implements ActionListener {
 				index++;
 			}
 		}
+
 	}
 
 	private char generateRandomExtraChar() {
@@ -234,9 +262,7 @@ public class Catchword extends JPanel implements ActionListener {
 		for (int i = 0; i < targetLabels.size(); i++) {
 			if (i < currentIndex) {
 				targetLabels.get(i).setForeground(Color.BLUE); // 맞춘 글자를 파란색으로 변경
-			} else {
-				targetLabels.get(i).setForeground(Color.BLACK); // 맞추지 않은 글자는 기본 색상으로 유지
-			}
+			} 
 		}
 	}
 
@@ -247,7 +273,7 @@ public class Catchword extends JPanel implements ActionListener {
 
 		// 목표 단어의 현재 인덱스 글자와 일치하는지 확인
 		if (currentIndex < targetWord.length() && clickedText.charAt(0) == targetWord.charAt(currentIndex)) {
-			// 맞은 경우: 검정색 테두리로 설정
+			// 맞은 경우: 파란색 테두리로 설정
 
 			currentIndex++;
 			updateTargetLabel();
