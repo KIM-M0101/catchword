@@ -1,5 +1,9 @@
 package login;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -32,9 +36,10 @@ public class JoinFrame {
 	public void setFrame(JFrame frame) {
 		//StartFrame에 loginPanel을 띄우는 역할
 		joinTry=0;
+		frame.setSize(1280, 720);
 		frame.setContentPane(mainPanel);
 		frame.setLocationRelativeTo(null);
-		frame.setSize(1280, 720);
+		frame.setLayout(new FlowLayout(FlowLayout.CENTER));
 		while(joinTry==0) {
 			//로그인이나 회원가입 버튼이 눌리지 않으면 계속 창을 띄워둠
 			frame.setVisible(true);
@@ -45,7 +50,7 @@ public class JoinFrame {
 	
 	JPanel setupJoin() {
 		
-		JPanel mainPanel = new JPanel() {
+		JPanel mainPanel = new JPanel(new BorderLayout()) {
 			protected void paintComponent(Graphics g) {
 				Image background = new ImageIcon("imgs/Join.jpg").getImage();
 				g.drawImage(background, 0, 0,getWidth(), getHeight(), this);
@@ -54,19 +59,23 @@ public class JoinFrame {
 				super.paintComponent(g);
 			}
 		};
-	                                                                                                                                                                                              
+	     
+		JPanel innerPanel = new JPanel(new GridLayout(4, 1));
+		innerPanel.setPreferredSize(new Dimension(500, 350));
+		innerPanel.setBackground(new Color(135, 206, 235));
+		
 		JLabel title= new JLabel("회원가입", JLabel.CENTER);
 		
 		JPanel idPanel= new JPanel();
 		
 		JLabel id= new JLabel("아이디: ", JLabel.CENTER);
-		JTextField idField= new JTextField(10);
-		
+		JTextField idField = new JTextField(10);
+		idPanel.setBackground(new Color(135, 206, 235));
 		idPanel.add(id);
 		idPanel.add(idField);
 
 		JPanel pwPanel= new JPanel();
-		
+		pwPanel.setBackground(new Color(135, 206, 235));
 		JLabel password= new JLabel("비밀번호: ", JLabel.CENTER);
 		JTextField pwField= new JTextField(10);
 		
@@ -74,8 +83,10 @@ public class JoinFrame {
 		pwPanel.add(pwField);
 	
 		JPanel loginPanel= new JPanel();
+		loginPanel.setBackground(new Color(135, 206, 235));
 		
 		JButton login = new JButton("가입하기");
+		login.setBackground(new Color(255, 255, 224));
 		
 		login.addActionListener(new ActionListener() {
 			@Override
@@ -97,10 +108,12 @@ public class JoinFrame {
 		
 		loginPanel.add(login);
 
-		mainPanel.add(title);
-		mainPanel.add(idPanel);
-		mainPanel.add(pwPanel);
-		mainPanel.add(loginPanel);
+		innerPanel.add(title);
+		innerPanel.add(idPanel);
+		innerPanel.add(pwPanel);
+		innerPanel.add(loginPanel);
+		
+		mainPanel.add(innerPanel);
 		
 		return mainPanel;
 	}

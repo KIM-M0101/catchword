@@ -3,6 +3,7 @@ package login;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -50,7 +51,7 @@ public class LoginFrame {
 
 	JPanel setupLogin() {
 		
-		JPanel mainPanel = new JPanel(new GridLayout(4, 1, 10, 10)) {
+		JPanel mainPanel = new JPanel(new BorderLayout()) {
 			protected void paintComponent(Graphics g) {
 				Image background = new ImageIcon("imgs/Login.jpg").getImage();
 				g.drawImage(background, 0, 0,getWidth(), getHeight(), this);
@@ -60,20 +61,24 @@ public class LoginFrame {
 			}
 		};
 		
-		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-
-		JLabel title = new JLabel("로그인");
+		
+		JPanel innerPanel = new JPanel(new GridLayout(4, 1));
+		innerPanel.setPreferredSize(new Dimension(500, 350));
+		innerPanel.setBackground(new Color(135, 206, 235));
+		
+		
+		JLabel title = new JLabel("로그인", JLabel.CENTER);
 		
 		JPanel idPanel = new JPanel();
 		
 		JLabel id = new JLabel("아이디 ");
 		JTextField idField = new JTextField(10);
-
+		idPanel.setBackground(new Color(135, 206, 235));
 		idPanel.add(id);
 		idPanel.add(idField);
 
 		JPanel pwPanel = new JPanel();
-
+		pwPanel.setBackground(new Color(135, 206, 235));
 		JLabel password = new JLabel("비밀번호 ");
 		JTextField pwField = new JTextField(10);  // 입력 필드의 가로 길이를 10으로 변경
 		//pwField.setBackground(Color.white);  // 입력 필드의 배경색을 흰색으로 변경
@@ -83,9 +88,11 @@ public class LoginFrame {
 		pwPanel.add(pwField);
 
 		JPanel loginPanel = new JPanel();
-		
+		loginPanel.setBackground(new Color(135, 206, 235));
 		JButton join = new JButton("회원가입");
+		join.setBackground(new Color(255, 255, 224));
 		JButton login = new JButton("확인");
+		login.setBackground(new Color(255, 255, 224));
 
 		join.addActionListener(new ActionListener() {
 			@Override
@@ -114,10 +121,12 @@ public class LoginFrame {
 		loginPanel.add(join);
 		
 	
-		mainPanel.add(title);
-		mainPanel.add(idPanel);
-		mainPanel.add(pwPanel);
-		mainPanel.add(loginPanel);
+		innerPanel.add(title);
+		innerPanel.add(idPanel);
+		innerPanel.add(pwPanel);
+		innerPanel.add(loginPanel);
+		
+		mainPanel.add(innerPanel);
 
 		return mainPanel;
 	}
