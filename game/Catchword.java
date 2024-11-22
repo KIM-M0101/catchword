@@ -273,10 +273,9 @@ public class Catchword extends JPanel implements ActionListener {
 
 		// 목표 단어의 현재 인덱스 글자와 일치하는지 확인
 		if (currentIndex < targetWord.length() && clickedText.charAt(0) == targetWord.charAt(currentIndex)) {
-			// 맞은 경우: 파란색 테두리로 설정
 
 			currentIndex++;
-			updateTargetLabel();
+			updateTargetLabel(); // 맞은 경우: 제시어의 글자를 파란색 테두리로 설정
 
 			if (currentIndex == targetWord.length()) {
 				addTime(plusTime);
@@ -290,8 +289,10 @@ public class Catchword extends JPanel implements ActionListener {
 					return;
 				}
 
+				// 새로운 제시어 준비
 				currentIndex = 0;
 				resetGame();
+				shuffleButtons(); // 새로운 제시어가 나올 때만 버튼 글자를 섞음
 			}
 		} else {
 			// 틀린 경우: 빨간색 테두리로 설정
@@ -312,14 +313,15 @@ public class Catchword extends JPanel implements ActionListener {
 	            
 			Toolkit.getDefaultToolkit().beep();
 
-			currentIndex = 0;
-			resetGame();
+			// 현재 제시어는 그대로 유지
+        currentIndex = 0;
+        updateTargetLabel(); // 기존에 맞춘 글자들 표시 초기화
+	
+			// 모든 버튼의 상태를 초기화하여 틀린 상태에서만 빨간색 테두리를 유지
+			//shuffleButtons();
 		}
-
-		// 모든 버튼의 상태를 초기화하여 틀린 상태에서만 빨간색 테두리를 유지
-		shuffleButtons();
 	}
-
+		
 	private void showFinalScore(int totalScore) {
 	    // 최종 점수 계산
 	    if (time == 0) {
