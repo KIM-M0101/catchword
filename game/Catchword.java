@@ -17,46 +17,46 @@ import java.util.Scanner;
 import main.*;
 
 public class Catchword extends JPanel implements ActionListener {
-	Image gameBackGround= new ImageIcon("gameWindow.jpg").getImage();
-    Random random = new Random();
-    // 파일에서 단어 로드
-    private ArrayList<String> words = loadWordsFromFile("words.txt");
-    private int currentWordIndex;
-    private String targetWord;
-    private JLabel timerLabel;
-    private JLabel stageLabel;
-    private JLabel problemLabel;
-    private JPanel targetPanel;
-    private ArrayList<JLabel> targetLabels;
-    private JPanel topPanel;
-    private JPanel gridPanel;
+	Image gameBackGround = new ImageIcon("gameWindow.jpg").getImage();
+	Random random = new Random();
+	// 파일에서 단어 로드
+	private ArrayList<String> words = loadWordsFromFile("words.txt");
+	private int currentWordIndex;
+	private String targetWord;
+	private JLabel timerLabel;
+	private JLabel stageLabel;
+	private JLabel problemLabel;
+	private JPanel targetPanel;
+	private ArrayList<JLabel> targetLabels;
+	private JPanel topPanel;
+	private JPanel gridPanel;
 
-    private JButton[][] buttons;
-    private int currentIndex = 0;
-    private int time = 30;
-    private int plusTime = 0;
-    private int Psize;
-    private Timer timer;
-    private int score = 0;
-    private int totalScore = 0;
-    private static int MAX_ROUNDS = 5;
-    private int roundsCompleted = 0;
-    private int finalScore = 0;
-    private int minusTime = 1;
-    PlayerRecord r = null;
-    private int selectedLevel = 0;
+	private JButton[][] buttons;
+	private int currentIndex = 0;
+	private int time = 30;
+	private int plusTime = 0;
+	private int Psize;
+	private Timer timer;
+	private int score = 0;
+	private int totalScore = 0;
+	private static int MAX_ROUNDS = 5;
+	private int roundsCompleted = 0;
+	private int finalScore = 0;
+	private int minusTime = 1;
+	PlayerRecord r = null;
+	private int selectedLevel = 0;
 
-    private static final String[] EXTRA_CHARS = { "가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하",
-            "강", "난", "당", "락", "만", "방", "산", "알", "장", "착", "칼", "탕", "팔", "한" };
+	private boolean isPaused = false;
+	private boolean hasPaused = false;
+	private JButton pauseButton;
 
-    private static Difficulty[] difficulties = {
-            new Difficulty(60, 3, 5, 1, 0, 3),
-            new Difficulty(50, 4, 5, 2, 0, 3),
-            new Difficulty(40, 5, 5, 3, 3, 3),
-            new Difficulty(30, 6, 5, 4, 4, 4),
-            new Difficulty(30, 7, 5, 5, 5, 4)
-    };
-    private ArrayList<String> loadWordsWithLength(int length) {
+	private static final String[] EXTRA_CHARS = { "가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하",
+			"강", "난", "당", "락", "만", "방", "산", "알", "장", "착", "칼", "탕", "팔", "한" };
+
+	private static Difficulty[] difficulties = { new Difficulty(60, 3, 5, 1, 0, 3), new Difficulty(50, 4, 5, 2, 0, 3),
+			new Difficulty(40, 5, 5, 3, 3, 3), new Difficulty(30, 6, 5, 4, 4, 4), new Difficulty(30, 7, 5, 5, 5, 4) };
+
+	private ArrayList<String> loadWordsWithLength(int length) {
 		ArrayList<String> filteredWords = new ArrayList<>();
 		for (String word : words) {
 			if (word.length() == length) {
@@ -65,90 +65,171 @@ public class Catchword extends JPanel implements ActionListener {
 		}
 		return filteredWords;
 	}
-    
 
-    public void paintComponent(Graphics g) {
-    	super.paintComponent(g);
-    	g.drawImage(gameBackGround, 0, 0,getWidth(), getHeight(), this);
-    }
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(gameBackGround, 0, 0, getWidth(), getHeight(), this);
 
-    
-    public Catchword(int difficultyLevel, PlayerRecord r) {
-    	this.selectedLevel = difficultyLevel;
-    	this.r = r;
-        setLayout(new BorderLayout(0,0));
-        setSize(1280,720);
-        
-        Difficulty selectedDifficulty = difficulties[difficultyLevel];
-        time = selectedDifficulty.timeLimit;
-        MAX_ROUNDS = selectedDifficulty.numRounds;
-        score = selectedDifficulty.score; 
-        plusTime = selectedDifficulty.plustime;
-        Psize = selectedDifficulty.Psize;
-        words = loadWordsWithLength(selectedDifficulty.wordLength);
+		if (isPaused) {
+			g.setColor(new Color(0, 0, 0, 150)); // 반투명 검은색
+			g.fillRect(0, 0, getWidth(), getHeight());
+		} 
+		else {
+			repaint();
+		}
+	}
 
-        currentWordIndex = random.nextInt(words.size());
-        targetWord = words.get(currentWordIndex);
-        
-        JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        infoPanel.setBackground(new Color(255,0,0,0));
-        stageLabel = new JLabel("단계: " + score);
-        stageLabel.setBackground(new Color(255,0,0,0));
-        problemLabel = new JLabel("문제: 1 / " + MAX_ROUNDS);
-        problemLabel.setBackground(new Color(255,0,0,0));
+	public Catchword(int difficultyLevel, PlayerRecord r) {
+		this.selectedLevel = difficultyLevel;
+		this.r = r;
+		setLayout(new BorderLayout(0, 0));
+		setSize(1280, 720);
 
-        stageLabel.setFont(new Font("돋움", Font.BOLD, 16));
-        problemLabel.setFont(new Font("돋움", Font.BOLD, 16));
-        infoPanel.add(stageLabel);
-        infoPanel.add(problemLabel);
+		Difficulty selectedDifficulty = difficulties[difficultyLevel];
 
-        topPanel = new JPanel(new BorderLayout());
-        topPanel.setBackground(new Color(255,0,0,0));
-        topPanel.add(infoPanel, BorderLayout.NORTH);
+		time = 60;
 
-        targetPanel = new JPanel();
-        targetPanel.setBackground(new Color(255,0,0,0));
-        
-        targetLabels = new ArrayList<>();
-        for (char c : targetWord.toCharArray()) {
-            JLabel letterLabel = new JLabel(String.valueOf(c));
-            letterLabel.setFont(new Font("돋움", Font.BOLD, 40));
-            targetPanel.add(letterLabel);
-            targetLabels.add(letterLabel);
-        }
-        topPanel.add(targetPanel, BorderLayout.CENTER);
-        add(topPanel, BorderLayout.NORTH);
+		MAX_ROUNDS = selectedDifficulty.numRounds;
+		score = selectedDifficulty.score;
+		plusTime = selectedDifficulty.plustime;
+		Psize = selectedDifficulty.Psize;
+		words = loadWordsWithLength(selectedDifficulty.wordLength);
 
-        timerLabel = new JLabel("남은 시간: " + time + "초");
-        timerLabel.setFont(new Font("돋움", Font.BOLD, 18));
-        add(timerLabel, BorderLayout.SOUTH);
+		currentWordIndex = random.nextInt(words.size());
+		targetWord = words.get(currentWordIndex);
 
-        buttons = new JButton[Psize][Psize];
-        JPanel canvas= new JPanel(null);
-        canvas.setBackground(new Color(255,0,0,0));
-        gridPanel = new JPanel();
-        gridPanel.setLayout(new GridLayout(Psize, Psize,10,10));
-        gridPanel.setBackground(new Color(255,0,0,0));
-        gridPanel.setSize(getWidth()/2, getHeight()/2);
-        gridPanel.setLocation(getWidth()/2-gridPanel.getWidth()/2, getHeight()/2-gridPanel.getHeight()/2);
-        canvas.add(gridPanel);
-        add(canvas, BorderLayout.CENTER);
+		JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		infoPanel.setBackground(new Color(255, 0, 0, 0));
+		stageLabel = new JLabel("단계: " + score);
+		stageLabel.setBackground(new Color(255, 0, 0, 0));
+		problemLabel = new JLabel("문제: 1 / " + MAX_ROUNDS);
+		problemLabel.setBackground(new Color(255, 0, 0, 0));
 
-        for (int i = 0; i < Psize; i++) {
-            for (int j = 0; j < Psize; j++) {
-                buttons[i][j] = new JButton();
-                buttons[i][j].setFont(new Font("돋움", Font.BOLD, 40));
-                buttons[i][j].addActionListener(this);
-                buttons[i][j].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-                gridPanel.add(buttons[i][j]);
-                buttons[i][j].setUI(new Button());
-            }
-        }
-        shuffleButtons();
-        startTimer();
-       
-    }
+		stageLabel.setFont(new Font("돋움", Font.BOLD, 16));
+		problemLabel.setFont(new Font("돋움", Font.BOLD, 16));
+		infoPanel.add(stageLabel);
+		infoPanel.add(problemLabel);
 
+		topPanel = new JPanel(new BorderLayout());
+		topPanel.setBackground(new Color(255, 0, 0, 0));
+		topPanel.add(infoPanel, BorderLayout.NORTH);
+
+		targetPanel = new JPanel();
+		targetPanel.setBackground(new Color(255, 0, 0, 0));
+
+		targetLabels = new ArrayList<>();
+		for (char c : targetWord.toCharArray()) {
+			JLabel letterLabel = new JLabel(String.valueOf(c));
+			letterLabel.setFont(new Font("돋움", Font.BOLD, 40));
+			targetPanel.add(letterLabel);
+			targetLabels.add(letterLabel);
+		}
+		topPanel.add(targetPanel, BorderLayout.CENTER);
+
+		// 일시정지 버튼 추가
+		pauseButton = new JButton("일시정지");
+		pauseButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (isPaused) {
+					resumeGame();
+				} else {
+					togglePause();
+				}
+			}
+
+		});
+		topPanel.add(pauseButton, BorderLayout.EAST); // 버튼을 화면 상단 배치
+		add(topPanel, BorderLayout.NORTH);
+
+		timerLabel = new JLabel("남은 시간: " + time + "초");
+		timerLabel.setFont(new Font("돋움", Font.BOLD, 18));
+		add(timerLabel, BorderLayout.SOUTH);
+
+		buttons = new JButton[Psize][Psize];
+		JPanel canvas = new JPanel(null);
+		canvas.setBackground(new Color(255, 0, 0, 0));
+		gridPanel = new JPanel();
+		gridPanel.setLayout(new GridLayout(Psize, Psize, 10, 10));
+		gridPanel.setBackground(new Color(255, 0, 0, 0));
+		gridPanel.setSize(getWidth() / 2, getHeight() / 2);
+		gridPanel.setLocation(getWidth() / 2 - gridPanel.getWidth() / 2, getHeight() / 2 - gridPanel.getHeight() / 2);
+		canvas.add(gridPanel);
+		add(canvas, BorderLayout.CENTER);
+
+		for (int i = 0; i < Psize; i++) {
+			for (int j = 0; j < Psize; j++) {
+				buttons[i][j] = new JButton();
+				buttons[i][j].setFont(new Font("돋움", Font.BOLD, 40));
+				buttons[i][j].addActionListener(this);
+				buttons[i][j].setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
+				gridPanel.add(buttons[i][j]);
+				buttons[i][j].setUI(new Button());
+			}
+		}
+		shuffleButtons();
+		startTimer();
+
+	}
+
+	// 게임 일시정지 기능 메서드
+	private void togglePause() {
+		if (hasPaused)
+			return;
+
+		isPaused = !isPaused;
+		if (isPaused) {
+			timer.stop();
+			pauseButton.setText("다시 시작");
+
+			JLabel pauseMessage = new JLabel("일시정지 중");
+			pauseMessage.setFont(new Font("돋움", Font.BOLD, 40));
+			pauseMessage.setForeground(Color.RED);
+			targetPanel.add(pauseMessage);
+
+			for (JLabel label : targetLabels) {
+				label.setText("");
+			}
+			disableButton();
+			hasPaused = true;
+		} else {
+			resumeGame();
+		}
+	}
+
+	// 게임 다시 시작 메서드
+	private void resumeGame() {
+		hasPaused = false;
+		isPaused = false;
+		enableButton();
+		pauseButton.setEnabled(false);
+		pauseButton.setText("일시정지");
+
+		currentWordIndex = random.nextInt(words.size());
+		targetWord = words.get(currentWordIndex);
+		resetGame();
+		timer.start();
+		repaint();
+	}
+
+	// 버튼 비활성화 메서드
+	private void disableButton() {
+		for (int i = 0; i < Psize; i++) {
+			for (int j = 0; j < Psize; j++) {
+				buttons[i][j].setEnabled(false);
+			}
+		}
+	}
+
+	// 버튼 활성화 메서드
+	private void enableButton() {
+		for (int i = 0; i < Psize; i++) {
+			for (int j = 0; j < Psize; j++) {
+				buttons[i][j].setEnabled(true);
+			}
+		}
+
+	}
 
 	// 타이머 설정 메서드
 	private void startTimer() {
@@ -191,7 +272,7 @@ public class Catchword extends JPanel implements ActionListener {
 			JLabel letterLabel = new JLabel(String.valueOf(c));
 			letterLabel.setFont(new Font("돋움", Font.BOLD, 40));
 			letterLabel.setForeground(Color.BLACK);
-			letterLabel.setBackground(new Color(255,0,0,0));
+			letterLabel.setBackground(new Color(255, 0, 0, 0));
 			targetPanel.add(letterLabel);
 			targetLabels.add(letterLabel);
 		}
@@ -212,13 +293,13 @@ public class Catchword extends JPanel implements ActionListener {
 			chars.add(c);
 		}
 
-		while (chars.size() < Psize*Psize) {
+		while (chars.size() < Psize * Psize) {
 			char extraChar = generateRandomExtraChar();
 			if (!chars.contains(extraChar)) {
 				chars.add(extraChar);
 			}
 		}
-		
+
 		Collections.shuffle(chars);
 		int index = 0;
 		for (int i = 0; i < Psize; i++) {
@@ -262,7 +343,7 @@ public class Catchword extends JPanel implements ActionListener {
 		for (int i = 0; i < targetLabels.size(); i++) {
 			if (i < currentIndex) {
 				targetLabels.get(i).setForeground(Color.BLUE); // 맞춘 글자를 파란색으로 변경
-			} 
+			}
 		}
 	}
 
@@ -285,7 +366,7 @@ public class Catchword extends JPanel implements ActionListener {
 
 				if (roundsCompleted == MAX_ROUNDS) {
 					timer.stop();
-					//JOptionPane.showMessageDialog(this, "성공! 모든 단어를 맞췄습니다.");
+					// JOptionPane.showMessageDialog(this, "성공! 모든 단어를 맞췄습니다.");
 					showFinalScore(totalScore);
 					return;
 				}
@@ -298,18 +379,18 @@ public class Catchword extends JPanel implements ActionListener {
 
 			penaltyTime(minusTime);
 
-			 Color originalColor = this.getBackground();
-	            this.setBackground(Color.RED);
+			Color originalColor = this.getBackground();
+			this.setBackground(Color.RED);
 
-	            Timer flashTimer = new Timer(500, new ActionListener() {
-	                @Override
-	                public void actionPerformed(ActionEvent evt) {
-	                    setBackground(originalColor);
-	                }
-	            });
-	            flashTimer.setRepeats(false);
-	            flashTimer.start();
-	            
+			Timer flashTimer = new Timer(500, new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					setBackground(originalColor);
+				}
+			});
+			flashTimer.setRepeats(false);
+			flashTimer.start();
+
 			Toolkit.getDefaultToolkit().beep();
 
 			currentIndex = 0;
@@ -321,36 +402,38 @@ public class Catchword extends JPanel implements ActionListener {
 	}
 
 	private void showFinalScore(int totalScore) {
-	    // 최종 점수 계산
-	    if (time == 0) {
-	        finalScore = totalScore;
-	    } else {
-	        time += plusTime;
-	        finalScore = totalScore+ score * time;
-	        //r.getBestScoreLevel(score);
-	    }
+		// 난이도별 1문제당 점수 설정 (5단계부터 1단계까지 점수 차이)
+		int[] difficultyScores = { 1, 2, 3, 4, 5 }; // 1단계 1점, 2단계 2점, ... 5단계 5점
 
-	    // 타이머 중지 (게임이 끝났으므로)
-	    if (timer != null) { 
-	        timer.stop();
-	    }
+		// 선택한 난이도에 맞는 점수 가져오기
+		int difficultyScore = difficultyScores[selectedLevel]; // selectedLevel은 0부터 시작
 
-	    r.updateBestScoreAndLevel(finalScore, selectedLevel + 1);
-	    ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted);
-	    JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-	    if (mainFrame instanceof MainFrame) {
-	        ((MainFrame) mainFrame).setContentPane(scorePanel);
-	        mainFrame.revalidate();
-	        mainFrame.repaint();
-	    }
+		// 라운드 점수 (1문제당 점수 * 라운드 수)
+		int roundScore = roundsCompleted * difficultyScore;
 
+		// 남은 시간 점수 계산 (남은 시간 1초당 1점)
+		int timeScore = time; // 남은 시간이 1초당 1점씩 추가됨
+
+		// 최종 점수 계산
+		finalScore = roundScore + timeScore;
+
+		// 플레이어 기록 업데이트
+		r.updateBestScoreAndLevel(finalScore, selectedLevel + 1);
+
+		ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted);
+		JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+		if (mainFrame instanceof MainFrame) {
+			((MainFrame) mainFrame).setContentPane(scorePanel);
+			mainFrame.revalidate();
+			mainFrame.repaint();
+		}
 	}
 
 	private void updateProblemLabel() {
 		problemLabel.setText("문제: " + (roundsCompleted + 1) + " / " + MAX_ROUNDS);
 	}
 }
-	
+
 /*
  * public static void main(String[] args) { Catchword game = new Catchword(1);
  * game.setVisible(true); }
