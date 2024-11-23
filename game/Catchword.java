@@ -2,6 +2,7 @@ package game;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
 import game.Button;
 
@@ -49,6 +50,12 @@ public class Catchword extends JPanel implements ActionListener {
 	private boolean isPaused = false;
 	private boolean hasPaused = false;
 	private JButton pauseButton;
+	
+	private JButton hintButton;
+	private boolean hintUsed = false; // 힌트 사용 여부
+    private int hintPenalty = 5;  
+    
+    private JButton addTimeButton;
 
 	private static final String[] EXTRA_CHARS = { "가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하",
 			"강", "난", "당", "락", "만", "방", "산", "알", "장", "착", "칼", "탕", "팔", "한" };
@@ -73,8 +80,7 @@ public class Catchword extends JPanel implements ActionListener {
 		if (isPaused) {
 			g.setColor(new Color(0, 0, 0, 150)); // 반투명 검은색
 			g.fillRect(0, 0, getWidth(), getHeight());
-		} 
-		else {
+		} else {
 			repaint();
 		}
 	}
@@ -126,20 +132,49 @@ public class Catchword extends JPanel implements ActionListener {
 		}
 		topPanel.add(targetPanel, BorderLayout.CENTER);
 
-		// 일시정지 버튼 추가
 		pauseButton = new JButton("일시정지");
-		pauseButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (isPaused) {
-					resumeGame();
-				} else {
-					togglePause();
-				}
+		hintButton = new JButton("힌트");
+		addTimeButton = new JButton("시간추가");
+		
+		hintButton.setEnabled(selectedLevel >= 3 && !hintUsed);
+		addTimeButton.setEnabled(selectedLevel >= 3 && !hintUsed);
+		
+		pauseButton.setFont(new Font("돋움", Font.BOLD, 11));
+		hintButton.setFont(new Font("돋움", Font.BOLD, 11));
+		addTimeButton.setFont(new Font("돋움", Font.BOLD, 11));
+		Dimension buttonSize = new Dimension(90, 40);
+		pauseButton.setPreferredSize(buttonSize);
+		hintButton.setPreferredSize(buttonSize);
+		addTimeButton.setPreferredSize(buttonSize);
+
+		pauseButton.addActionListener(e -> {
+			if (isPaused) {
+				resumeGame();
+			} else {
+				togglePause();
 			}
 
 		});
-		topPanel.add(pauseButton, BorderLayout.EAST); // 버튼을 화면 상단 배치
+
+		hintButton.addActionListener(e -> useHint(hintButton));
+		
+		addTimeButton.addActionListener(e -> {
+			int addTime = 10;
+			addTime(addTime);
+			
+			totalScore -= hintPenalty;
+			if (totalScore < 0)
+				totalScore = 0;
+			addTimeButton.setEnabled(false);
+		});
+		
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+	    buttonPanel.setBackground(new Color(255, 0, 0, 0));
+	    buttonPanel.add(pauseButton);
+	    buttonPanel.add(hintButton);
+	    buttonPanel.add(addTimeButton);
+		topPanel.add(buttonPanel, BorderLayout.EAST); // 버튼을 화면 상단 배치
+		
 		add(topPanel, BorderLayout.NORTH);
 
 		timerLabel = new JLabel("남은 시간: " + time + "초");
@@ -247,6 +282,59 @@ public class Catchword extends JPanel implements ActionListener {
 			}
 		});
 		timer.start();
+	}
+
+	private void useHint(JButton hintButton) {
+		// 힌트 사용 처리
+		hintUsed = true;
+		hintButton.setEnabled(false); // 버튼 비활성화
+
+		// 현재 맞춰야 할 글자를 찾음
+		if (currentIndex < targetWord.length()) {
+			char hintChar = targetWord.charAt(currentIndex); // 현재 맞춰야 할 글자
+
+			for (int i = 0; i < Psize; i++) {
+				for (int j = 0; j < Psize; j++) {
+					JButton button = buttons[i][j];
+					if (button.getText().equals(String.valueOf(hintChar))) {
+						// 글자가 일치하는 버튼에 깜박임 효과 추가
+						startBlinkingEffect(button);
+						break; // 해당 글자만 깜박이므로 루프 종료
+					}
+				}
+			}
+		}
+
+		// 패널티 적용
+		totalScore -= hintPenalty;
+		if (totalScore < 0)
+			totalScore = 0; // 점수 음수 방지
+	}
+
+	private void startBlinkingEffect(JButton button) {
+		final Border originalBorder = button.getBorder(); // 원래 테두리 저장
+		final Border highlightBorder = BorderFactory.createLineBorder(Color.RED, 7); // 빨간색 강조 테두리
+
+		Timer blinkTimer = new Timer(200, new ActionListener() {
+			private boolean isBlinking = false; // 깜박임 상태를 추적
+			private int blinkCount = 0; // 깜박임 횟수
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (blinkCount >= 8) { // 총 8번 깜박임
+					button.setBorder(originalBorder); // 원래 테두리로 복원
+					((Timer) e.getSource()).stop(); // 타이머 중지
+					return;
+				}
+
+				// 테두리 전환
+				button.setBorder(isBlinking ? originalBorder : highlightBorder);
+				isBlinking = !isBlinking; // 상태 반전
+				blinkCount++;
+			}
+		});
+
+		blinkTimer.start(); // 타이머 시작
 	}
 
 	private void addTime(int plusTime) {
