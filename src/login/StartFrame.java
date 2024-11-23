@@ -1,5 +1,6 @@
 package login;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 
@@ -17,23 +18,21 @@ public class StartFrame extends JFrame{
 	public void setFrame() {
 		
 		startBtnPressed=0;
-		
 		setTitle("Catch Word!");
-		setSize(600, 600);
+		setSize(1280, 720);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
-
+		
         JPanel startPanel = new JPanel();
         startPanel.setSize(600, 600);
         startPanel.setLayout(new BorderLayout());
         
         JLabel titleLabel = new JLabel("Catch Word", SwingConstants.CENTER);
-        
-        JButton startButton = new JButton("시작하기");
+        ImageIcon icon = new ImageIcon("imgs/Start.jpg");
+        JButton startButton = new JButton(icon);
 
-        startPanel.add(titleLabel, BorderLayout.CENTER);
-        startPanel.add(startButton, BorderLayout.SOUTH);
+        startPanel.add(startButton);
         
         startButton.addActionListener(new ActionListener() {
 			@Override

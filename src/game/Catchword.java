@@ -17,7 +17,7 @@ import java.util.Scanner;
 import main.*;
 
 public class Catchword extends JPanel implements ActionListener {
-	Image gameBackGround= new ImageIcon("gameWindow.jpg").getImage();
+	Image gameBackGround= new ImageIcon("imgs/gameWindow.jpg").getImage();
     Random random = new Random();
     // 파일에서 단어 로드
     private ArrayList<String> words = loadWordsFromFile("words.txt");
@@ -76,8 +76,10 @@ public class Catchword extends JPanel implements ActionListener {
     public Catchword(int difficultyLevel, PlayerRecord r) {
     	this.selectedLevel = difficultyLevel;
     	this.r = r;
-        setLayout(new BorderLayout(0,0));
+    	setLayout(null);
         setSize(1280,720);
+        int width= getWidth();
+        int height = getHeight();
         
         Difficulty selectedDifficulty = difficulties[difficultyLevel];
         time = selectedDifficulty.timeLimit;
@@ -117,22 +119,25 @@ public class Catchword extends JPanel implements ActionListener {
             targetLabels.add(letterLabel);
         }
         topPanel.add(targetPanel, BorderLayout.CENTER);
-        add(topPanel, BorderLayout.NORTH);
+        topPanel.setSize(width,height/5);
+        topPanel.setLocation(0, height/10);
+        add(topPanel);
 
         timerLabel = new JLabel("남은 시간: " + time + "초");
         timerLabel.setFont(new Font("돋움", Font.BOLD, 18));
-        add(timerLabel, BorderLayout.SOUTH);
+        timerLabel.setForeground(Color.white);
+        timerLabel.setSize(width, 20);
+        timerLabel.setLocation(10, height-60);
+        add(timerLabel);
 
         buttons = new JButton[Psize][Psize];
-        JPanel canvas= new JPanel(null);
-        canvas.setBackground(new Color(255,0,0,0));
         gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(Psize, Psize,10,10));
         gridPanel.setBackground(new Color(255,0,0,0));
         gridPanel.setSize(getWidth()/2, getHeight()/2);
-        gridPanel.setLocation(getWidth()/2-gridPanel.getWidth()/2, getHeight()/2-gridPanel.getHeight()/2);
-        canvas.add(gridPanel);
-        add(canvas, BorderLayout.CENTER);
+        gridPanel.setLocation(getWidth()/2-gridPanel.getWidth()/2, getHeight()/2-gridPanel.getHeight()/2+50);
+        
+        add(gridPanel);
 
         for (int i = 0; i < Psize; i++) {
             for (int j = 0; j < Psize; j++) {
