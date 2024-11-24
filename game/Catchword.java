@@ -299,25 +299,21 @@ public class Catchword extends JPanel implements ActionListener {
 
 			penaltyTime(minusTime);
 
-			 Color originalColor = this.getBackground();
-	            this.setBackground(Color.RED);
+			Color originalColor = this.getBackground();
+	        this.setBackground(Color.RED);
 
-	            Timer flashTimer = new Timer(500, new ActionListener() {
-	                @Override
-	                public void actionPerformed(ActionEvent evt) {
+	        Timer flashTimer = new Timer(500, new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent evt) {
 	                    setBackground(originalColor);
-	                }
-	            });
-	            flashTimer.setRepeats(false);
-	            flashTimer.start();
+	            }
+	        });
+	        flashTimer.setRepeats(false);
+	        flashTimer.start();
 	            
 			Toolkit.getDefaultToolkit().beep();
 
-			// 현재 제시어는 그대로 유지
-        currentIndex = 0;
-        updateTargetLabel(); // 기존에 맞춘 글자들 표시 초기화
-	
-			// 모든 버튼의 상태를 초기화하여 틀린 상태에서만 빨간색 테두리를 유지
+        	//currentIndex = 0;
 			//shuffleButtons();
 		}
 	}
@@ -346,7 +342,7 @@ public class Catchword extends JPanel implements ActionListener {
 		r.updateBestScoreAndLevel(finalScore, selectedLevel + 1);
 
 		ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted,
-				selectedLevel+1, bestScore, bestLevel, difficultyScore);
+				bestScore, bestLevel, selectedLevel + 1);
 		JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
 		if (mainFrame instanceof MainFrame) {
 			((MainFrame) mainFrame).setContentPane(scorePanel);
