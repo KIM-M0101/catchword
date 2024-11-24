@@ -18,7 +18,7 @@ import java.util.Scanner;
 import main.*;
 
 public class Catchword extends JPanel implements ActionListener {
-	Image gameBackGround = new ImageIcon("gameWindow.jpg").getImage();
+	Image gameBackGround = new ImageIcon("imgs/gameWindow.jpg").getImage();
 	Random random = new Random();
 	// 파일에서 단어 로드
 	private ArrayList<String> words = loadWordsFromFile("words.txt");
@@ -50,12 +50,14 @@ public class Catchword extends JPanel implements ActionListener {
 	private boolean isPaused = false;
 	private boolean hasPaused = false;
 	private JButton pauseButton;
-	
+
 	private JButton hintButton;
 	private boolean hintUsed = false; // 힌트 사용 여부
-    private int hintPenalty = 5;  
-    
-    private JButton addTimeButton;
+	private int hintPenalty = 5;
+
+	private JButton addTimeButton;
+
+	private boolean itemUsedThisRound = false;
 
 	private static final String[] EXTRA_CHARS = { "가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하",
 			"강", "난", "당", "락", "만", "방", "산", "알", "장", "착", "칼", "탕", "팔", "한" };
@@ -88,8 +90,10 @@ public class Catchword extends JPanel implements ActionListener {
 	public Catchword(int difficultyLevel, PlayerRecord r) {
 		this.selectedLevel = difficultyLevel;
 		this.r = r;
-		setLayout(new BorderLayout(0, 0));
+		setLayout(null);
 		setSize(1280, 720);
+		int width = getWidth();
+		int height = getHeight();
 
 		Difficulty selectedDifficulty = difficulties[difficultyLevel];
 
@@ -135,10 +139,10 @@ public class Catchword extends JPanel implements ActionListener {
 		pauseButton = new JButton("일시정지");
 		hintButton = new JButton("힌트");
 		addTimeButton = new JButton("시간추가");
-		
+
 		hintButton.setEnabled(selectedLevel >= 3 && !hintUsed);
 		addTimeButton.setEnabled(selectedLevel >= 3 && !hintUsed);
-		
+
 		pauseButton.setFont(new Font("돋움", Font.BOLD, 11));
 		hintButton.setFont(new Font("돋움", Font.BOLD, 11));
 		addTimeButton.setFont(new Font("돋움", Font.BOLD, 11));
@@ -156,41 +160,56 @@ public class Catchword extends JPanel implements ActionListener {
 
 		});
 
-		hintButton.addActionListener(e -> useHint(hintButton));
-		
-		addTimeButton.addActionListener(e -> {
-			int addTime = 10;
-			addTime(addTime);
-			
-			totalScore -= hintPenalty;
-			if (totalScore < 0)
-				totalScore = 0;
-			addTimeButton.setEnabled(false);
+		hintButton.addActionListener(e -> {
+			if (!itemUsedThisRound) {
+				useHint(hintButton);
+				itemUsedThisRound = true;
+				hintButton.setEnabled(false);
+				addTimeButton.setEnabled(false); // 다른 아이템도 비활성화
+			}
 		});
-		
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-	    buttonPanel.setBackground(new Color(255, 0, 0, 0));
-	    buttonPanel.add(pauseButton);
-	    buttonPanel.add(hintButton);
-	    buttonPanel.add(addTimeButton);
-		topPanel.add(buttonPanel, BorderLayout.EAST); // 버튼을 화면 상단 배치
-		
-		add(topPanel, BorderLayout.NORTH);
+
+		addTimeButton.addActionListener(e -> {
+			if (!itemUsedThisRound) {
+				int addTime = 10;
+				addTime(addTime);
+
+				totalScore -= hintPenalty;
+				if (totalScore < 0)
+					totalScore = 0;
+				itemUsedThisRound = true;
+				hintButton.setEnabled(false); // 다른 아이템도 비활성화
+				addTimeButton.setEnabled(false);
+			}
+		});
+
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		buttonPanel.setBackground(new Color(255, 0, 0, 0));
+		buttonPanel.add(pauseButton);
+		buttonPanel.add(hintButton);
+		buttonPanel.add(addTimeButton);
+		topPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+		topPanel.setSize(width, height / 5);
+		topPanel.setLocation(0, height / 10);
+		add(topPanel);
 
 		timerLabel = new JLabel("남은 시간: " + time + "초");
 		timerLabel.setFont(new Font("돋움", Font.BOLD, 18));
-		add(timerLabel, BorderLayout.SOUTH);
+		timerLabel.setForeground(Color.white);
+		timerLabel.setSize(width, 20);
+		timerLabel.setLocation(10, height - 60);
+		add(timerLabel);
 
 		buttons = new JButton[Psize][Psize];
-		JPanel canvas = new JPanel(null);
-		canvas.setBackground(new Color(255, 0, 0, 0));
 		gridPanel = new JPanel();
 		gridPanel.setLayout(new GridLayout(Psize, Psize, 10, 10));
 		gridPanel.setBackground(new Color(255, 0, 0, 0));
 		gridPanel.setSize(getWidth() / 2, getHeight() / 2);
-		gridPanel.setLocation(getWidth() / 2 - gridPanel.getWidth() / 2, getHeight() / 2 - gridPanel.getHeight() / 2);
-		canvas.add(gridPanel);
-		add(canvas, BorderLayout.CENTER);
+		gridPanel.setLocation(getWidth() / 2 - gridPanel.getWidth() / 2,
+				getHeight() / 2 - gridPanel.getHeight() / 2 + 50);
+
+		add(gridPanel);
 
 		for (int i = 0; i < Psize; i++) {
 			for (int j = 0; j < Psize; j++) {
@@ -266,24 +285,6 @@ public class Catchword extends JPanel implements ActionListener {
 
 	}
 
-	// 타이머 설정 메서드
-	private void startTimer() {
-		timer = new Timer(1000, new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				time--;
-				timerLabel.setText("남은 시간: " + time + "초");
-
-				if (time == 0) {
-					timer.stop();
-					JOptionPane.showMessageDialog(Catchword.this, "시간 초과! 게임이 종료되었습니다.");
-					showFinalScore(totalScore);
-				}
-			}
-		});
-		timer.start();
-	}
-
 	private void useHint(JButton hintButton) {
 		// 힌트 사용 처리
 		hintUsed = true;
@@ -335,6 +336,30 @@ public class Catchword extends JPanel implements ActionListener {
 		});
 
 		blinkTimer.start(); // 타이머 시작
+	}
+
+	private void resetItemUsage() {
+		itemUsedThisRound = false;
+		hintButton.setEnabled(!itemUsedThisRound && selectedLevel >= 3 && !hintUsed);
+		addTimeButton.setEnabled(!itemUsedThisRound && selectedLevel >= 3);
+	}
+
+	// 타이머 설정 메서드
+	private void startTimer() {
+		timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				time--;
+				timerLabel.setText("남은 시간: " + time + "초");
+
+				if (time == 0) {
+					timer.stop();
+					JOptionPane.showMessageDialog(Catchword.this, "시간 초과! 게임이 종료되었습니다.");
+					showFinalScore(totalScore);
+				}
+			}
+		});
+		timer.start();
 	}
 
 	private void addTime(int plusTime) {

@@ -113,7 +113,15 @@ public class MainMenu {
 		JPanel userInfoPanel = new JPanel();
 		userInfoPanel.setLayout(new BorderLayout());
 
-		JPanel userPanel = new JPanel(new GridLayout(3, 1));
+		JPanel userPanel = new JPanel(new GridLayout(3, 1)){
+			protected void paintComponent(Graphics g) {
+				Image background = new ImageIcon("imgs/Join.jpg").getImage();
+				g.drawImage(background, 0, 0,getWidth(), getHeight(), this);
+				setOpaque(false);
+				
+				super.paintComponent(g);
+			}
+		};
 		JPanel optionPanel = new JPanel();
 
 		JLabel userInfoLabel = new JLabel("사용자 정보", SwingConstants.CENTER);
@@ -149,7 +157,15 @@ public class MainMenu {
 
 	// 랭킹 창
 	public JPanel RankingPanel() {
-		JPanel rank = new JPanel();
+		JPanel rank = new JPanel(){
+			protected void paintComponent(Graphics g) {
+				Image background = new ImageIcon("imgs/Login.jpg").getImage();
+				g.drawImage(background, 0, 0,getWidth(), getHeight(), this);
+				setOpaque(false);
+				
+				super.paintComponent(g);
+			}
+		};
 		rank.setLayout(new BorderLayout(10, 10)); // 상하좌우 여백 추가
 
 		JLabel rankingLabel = new JLabel("사용자 랭킹", SwingConstants.CENTER);
@@ -203,7 +219,15 @@ public class MainMenu {
 
 	// 게임 설명 창
 	public JPanel ExplainGamePanel() {
-		JPanel explain = new JPanel();
+		JPanel explain = new JPanel(){
+			protected void paintComponent(Graphics g) {
+				Image background = new ImageIcon("imgs/Login.jpg").getImage();
+				g.drawImage(background, 0, 0,getWidth(), getHeight(), this);
+				setOpaque(false);
+				
+				super.paintComponent(g);
+			}
+		};
 		explain.setLayout(new BorderLayout());
 
 		JLabel explainLabel = new JLabel("<html>게임 설명) 아래에 있는 버튼들을 눌러 목표 단어의 각 글자를 순서대로 맞추세요.<br><br>"

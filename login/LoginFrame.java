@@ -1,18 +1,30 @@
-
 package login;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 public class LoginFrame {
-
+	
 	public String enteredId;
 	public String enteredPw;
 	// 로그인 버튼이 눌렸는지 안 눌렸는지 확인하는 변수
@@ -26,9 +38,11 @@ public class LoginFrame {
 		// StartFrame에 loginPanel을 띄우는 역할
 		loginTry = 0;
 		joinBtnPressed = 0;
+		StartFrame.setSize(1280, 720);
 		StartFrame.setContentPane(mainPanel);
 		StartFrame.setLocationRelativeTo(null);
-
+		StartFrame.setLayout(null);
+		StartFrame.setResizable(false);
 		while (loginTry == 0) {
 			// 로그인이나 회원가입 버튼이 눌리지 않으면 계속 창을 띄워둠
 			StartFrame.setVisible(true);
@@ -37,31 +51,51 @@ public class LoginFrame {
 	}
 
 	JPanel setupLogin() {
-
-		JPanel mainPanel = new JPanel(new GridLayout(4, 1));
-		mainPanel.setSize(600, 600);
+		
+		JPanel mainPanel = new JPanel() {
+			protected void paintComponent(Graphics g) {
+				Image background = new ImageIcon("imgs/Login.jpg").getImage();
+				g.drawImage(background, 0, 0,getWidth(), getHeight(), this);
+				setOpaque(false);
+				
+				super.paintComponent(g);
+			}
+		};
+		mainPanel.setLayout(null);
+		mainPanel.setSize(1280, 720);
+		int width=mainPanel.getWidth();
+		int height=mainPanel.getHeight();
+		
+		JPanel innerPanel = new JPanel(new GridLayout(4, 1));
+		innerPanel.setSize(new Dimension(width/2, height/2));
+		innerPanel.setLocation(width/2-innerPanel.getWidth()/2, height/2-innerPanel.getHeight()/2);
+		
 		JLabel title = new JLabel("로그인", JLabel.CENTER);
-
+		
 		JPanel idPanel = new JPanel();
-
-		JLabel id = new JLabel("아이디: ", JLabel.CENTER);
+		
+		JLabel id = new JLabel("아이디 ");
 		JTextField idField = new JTextField(10);
-
+		idPanel.setBackground(new Color(135, 206, 235));
 		idPanel.add(id);
 		idPanel.add(idField);
 
 		JPanel pwPanel = new JPanel();
-
-		JLabel password = new JLabel("비밀번호: ", JLabel.CENTER);
-		JTextField pwField = new JTextField(10);
-
+		pwPanel.setBackground(new Color(135, 206, 235));
+		JLabel password = new JLabel("비밀번호 ");
+		JTextField pwField = new JTextField(10);  // 입력 필드의 가로 길이를 10으로 변경
+		//pwField.setBackground(Color.white);  // 입력 필드의 배경색을 흰색으로 변경
+		//pwField.setBorder(new LineBorder(Color.black));  // 입력 필드의 테두리를 검은색 선으로 변경
+		
 		pwPanel.add(password);
 		pwPanel.add(pwField);
 
 		JPanel loginPanel = new JPanel();
-
+		loginPanel.setBackground(new Color(135, 206, 235));
 		JButton join = new JButton("회원가입");
+		join.setBackground(new Color(255, 255, 224));
 		JButton login = new JButton("확인");
+		login.setBackground(new Color(255, 255, 224));
 
 		join.addActionListener(new ActionListener() {
 			@Override
@@ -88,11 +122,14 @@ public class LoginFrame {
 
 		loginPanel.add(login);
 		loginPanel.add(join);
-
-		mainPanel.add(title);
-		mainPanel.add(idPanel);
-		mainPanel.add(pwPanel);
-		mainPanel.add(loginPanel);
+		
+	
+		innerPanel.add(title);
+		innerPanel.add(idPanel);
+		innerPanel.add(pwPanel);
+		innerPanel.add(loginPanel);
+		
+		mainPanel.add(innerPanel);
 
 		return mainPanel;
 	}
