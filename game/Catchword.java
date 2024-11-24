@@ -323,29 +323,36 @@ public class Catchword extends JPanel implements ActionListener {
 	}
 		
 	private void showFinalScore(int totalScore) {
-	    // 최종 점수 계산
-	    if (time == 0) {
-	        finalScore = totalScore;
-	    } else {
-	        time += plusTime;
-	        finalScore = totalScore+ score * time;
-	        //r.getBestScoreLevel(score);
-	    }
+	    // 난이도별 1문제당 점수 설정 (5단계부터 1단계까지 점수 차이)
+		int[] difficultyScores = { 1, 2, 3, 4, 5 }; // 1단계 1점, 2단계 2점, ... 5단계 5점
 
-	    // 타이머 중지 (게임이 끝났으므로)
-	    if (timer != null) { 
-	        timer.stop();
-	    }
+		// 선택한 난이도에 맞는 점수 가져오기
+		int difficultyScore = difficultyScores[selectedLevel]; // selectedLevel은 0부터 시작
 
-	    r.updateBestScoreAndLevel(finalScore, selectedLevel + 1);
-	    ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted);
-	    JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-	    if (mainFrame instanceof MainFrame) {
-	        ((MainFrame) mainFrame).setContentPane(scorePanel);
-	        mainFrame.revalidate();
-	        mainFrame.repaint();
-	    }
+		// 라운드 점수 (1문제당 점수 * 라운드 수)
+		int roundScore = roundsCompleted * difficultyScore;
 
+		// 남은 시간 점수 계산 (남은 시간 1초당 1점)
+		int timeScore = time; // 남은 시간이 1초당 1점씩 추가됨
+		
+		//r에서 원래 최고기록 점수와 레벨
+		int bestScore = r.getBestScore();
+		int bestLevel = r.getBestScoreLevel();
+		
+		// 최종 점수 계산
+		finalScore = roundScore + timeScore;
+
+		// 플레이어 기록 업데이트
+		r.updateBestScoreAndLevel(finalScore, selectedLevel + 1);
+
+		ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted,
+				selectedLevel+1, bestScore, bestLevel);
+		JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+		if (mainFrame instanceof MainFrame) {
+			((MainFrame) mainFrame).setContentPane(scorePanel);
+			mainFrame.revalidate();
+			mainFrame.repaint();
+		}
 	}
 
 	private void updateProblemLabel() {
