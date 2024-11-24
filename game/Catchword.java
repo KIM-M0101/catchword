@@ -526,14 +526,19 @@ public class Catchword extends JPanel implements ActionListener {
 
 		// 남은 시간 점수 계산 (남은 시간 1초당 1점)
 		int timeScore = time; // 남은 시간이 1초당 1점씩 추가됨
-
+		
+		//r에서 원래 최고기록 점수와 레벨
+		int bestScore = r.getBestScore();
+		int bestLevel = r.getBestScoreLevel();
+		
 		// 최종 점수 계산
 		finalScore = roundScore + timeScore;
 
 		// 플레이어 기록 업데이트
 		r.updateBestScoreAndLevel(finalScore, selectedLevel + 1);
 
-		ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted);
+		ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted,
+				selectedLevel+1, bestScore, bestLevel);
 		JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
 		if (mainFrame instanceof MainFrame) {
 			((MainFrame) mainFrame).setContentPane(scorePanel);

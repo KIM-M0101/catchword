@@ -3,19 +3,28 @@ package game;
 import javax.swing.*;
 
 import main.MainFrame;
+import main.PlayerRecord;
 
 import java.awt.*;
 
 public class ScorePanel extends JPanel {
     private boolean transitionInProgress = false;
-    public ScorePanel(int time, int finalScore, int roundsCompleted) {
+    public ScorePanel(int time, int finalScore, int selectedLevel, int roundsCompleted, 
+    		int bestScore, int bestLevel) {
         setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("게임 종료!", SwingConstants.CENTER);
         titleLabel.setFont(new Font("돋움", Font.BOLD, 24));
         add(titleLabel, BorderLayout.NORTH);
-
+        
+        
         String scoreMessage = "맞춘 문제 수: " + roundsCompleted+"개" + " 남은시간 :" + time + "초 최종 점수: " + finalScore + "점";
+        
+        if(bestScore<=finalScore) {
+        	if(bestLevel<=selectedLevel)
+        	scoreMessage = "신기록입니다! 최종점수: "+ finalScore;
+        }
+        
         JLabel scoreLabel = new JLabel(scoreMessage, SwingConstants.CENTER);
         scoreLabel.setFont(new Font("돋움", Font.PLAIN, 18));
         add(scoreLabel, BorderLayout.CENTER);

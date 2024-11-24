@@ -69,6 +69,7 @@ public class LoginFrame {
 		JPanel innerPanel = new JPanel(new GridLayout(4, 1));
 		innerPanel.setSize(new Dimension(width/2, height/2));
 		innerPanel.setLocation(width/2-innerPanel.getWidth()/2, height/2-innerPanel.getHeight()/2);
+		innerPanel.setBackground(new Color(135, 206, 235));
 		
 		JLabel title = new JLabel("로그인", JLabel.CENTER);
 		

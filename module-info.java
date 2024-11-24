@@ -4,6 +4,6 @@
 /**
  * 
  */
-module CatchWord_1 {
+module CatchWord {
 	requires java.desktop;
 }
