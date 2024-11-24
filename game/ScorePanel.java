@@ -7,7 +7,7 @@ import main.MainFrame;
 public class ScorePanel extends JPanel {
     private boolean transitionInProgress = false;
     public ScorePanel(int time, int finalScore, int selectedLevel, int roundsCompleted, 
-    		int bestScore, int bestLevel) {
+    		int bestScore, int bestLevel, int difficultyScore) {
         setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("게임 종료!", SwingConstants.CENTER);
@@ -15,7 +15,9 @@ public class ScorePanel extends JPanel {
         add(titleLabel, BorderLayout.NORTH);
         
         
-        String scoreMessage = "맞춘 문제 수: " + roundsCompleted+"개" + " 남은시간 :" + time + "초 최종 점수: " + finalScore + "점";
+        String scoreMessage = String.format(
+        "<html>맞춘 문제 수: %d개<br><br>남은시간: %d초<br><br>기본 점수: %d<br>최종 점수(기본 점수+남은 시간): %d점</html>",
+        roundsCompleted, time, (roundsCompleted*difficultyScore), finalScore);
         
         if(bestScore<=finalScore) {
         	if(bestLevel<=selectedLevel)

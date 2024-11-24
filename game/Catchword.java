@@ -346,7 +346,7 @@ public class Catchword extends JPanel implements ActionListener {
 		r.updateBestScoreAndLevel(finalScore, selectedLevel + 1);
 
 		ScorePanel scorePanel = new ScorePanel(time, finalScore, roundsCompleted,
-				selectedLevel+1, bestScore, bestLevel);
+				selectedLevel+1, bestScore, bestLevel, difficultyScore);
 		JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
 		if (mainFrame instanceof MainFrame) {
 			((MainFrame) mainFrame).setContentPane(scorePanel);
